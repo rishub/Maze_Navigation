@@ -3,7 +3,9 @@ package com.example.kevinwu.maze_navigation;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,25 +30,66 @@ public class GameView extends View {
     private int mazeFinishX, mazeFinishY;
     private Maze maze;
     private Activity m_context;
-    private Paint line, red, background;
+    private Paint line = new Paint();
+    private Paint red = new Paint();
+    private Paint background = new Paint();
+    private Paint my_color = new Paint();
 
-    public GameView(Context context, Maze maze) {
+    public GameView(Context context) {
         super(context);
-        this.m_context = (Activity) context;
+        Maze maze = MazeFactory.getMaze(1);
+        init(null, 0, maze);
+    }
+
+    public GameView(Context context, AttributeSet attributeSet){
+        super(context, attributeSet);
+        Maze maze = MazeFactory.getMaze(1);
+        init(attributeSet, 0, maze);
+    }
+
+    public GameView(Context context, AttributeSet attributeSet, int defStyle){
+        super(context, attributeSet, defStyle);
+        Maze maze = MazeFactory.getMaze(1);
+        init(attributeSet, defStyle, maze);
+    }
+
+//    public GameView(Context context, Maze maze){
+//        super(context);
+//        this.m_context = (Activity) context;
+//        this.maze = maze;
+//        mazeFinishX = maze.getFinalX();
+//        mazeFinishY = maze.getFinalY();
+//        mazeSizeX = maze.getMazeWidth();
+//        mazeSizeY = maze.getMazeHeight();
+//        line = new Paint();
+//        line.setColor(0x000000);
+//        red = new Paint();
+//        red.setColor(0xff0000);
+//        background = new Paint();
+//        background.setColor(0xdddddd);
+//        setFocusable(true);
+//        this.setFocusableInTouchMode(true);
+//    }
+
+    private void init(AttributeSet attrs, int defStyle, Maze maze){
+        my_color.setColor(Color.RED);
+        background.setColor(Color.LTGRAY);
+        red.setColor(Color.RED);
+        line.setColor(Color.WHITE);
         this.maze = maze;
         mazeFinishX = maze.getFinalX();
         mazeFinishY = maze.getFinalY();
         mazeSizeX = maze.getMazeWidth();
         mazeSizeY = maze.getMazeHeight();
-        line = new Paint();
-        line.setColor(0x000000);
-        red = new Paint();
-        red.setColor(0xff0000);
-        background = new Paint();
-        background.setColor(0xdddddd);
-//        setFocusable(true);
-//        this.setFocusableInTouchMode(true);
     }
+
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//        canvas.drawRect(0,0,getWidth(),getHeight(), background);
+//        canvas.drawLine(0,0,getWidth(),getHeight(), red);
+//    }
+
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         width = (w < h)?w:h;
         height = width;         //for now square mazes
@@ -61,6 +104,7 @@ public class GameView extends View {
 
     protected void onDraw(Canvas canvas) {
         //fill in the background
+        super.onDraw(canvas);
         canvas.drawRect(0, 0, width, height, background);
         boolean[][] hLines = maze.getHorizontalLines();
         boolean[][] vLines = maze.getVerticalLines();
@@ -71,7 +115,6 @@ public class GameView extends View {
                 float y = i * totalCellHeight;
                 if(j < mazeSizeX - 1 && vLines[i][j]) {
                     //we'll draw a vertical line
-                    Log.d("Kevin", "Here4");
                     canvas.drawLine(x + cellWidth,   //start X
                             y,               //start Y
                             x + cellWidth,   //stop X
@@ -80,7 +123,6 @@ public class GameView extends View {
                 }
                 if(i < mazeSizeY - 1 && hLines[i][j]) {
                     //we'll draw a horizontal line
-                    Log.d("Kevin", "Here5");
                     canvas.drawLine(x,               //startX
                             y + cellHeight,  //startY
                             x + cellWidth,   //stopX
@@ -100,7 +142,6 @@ public class GameView extends View {
                 (mazeFinishX * totalCellWidth)+(cellWidth*0.25f),
                 (mazeFinishY * totalCellHeight)+(cellHeight*0.75f),
                 red);
-        Log.d("Kevin", "Here6");
     }
 
     @Override
