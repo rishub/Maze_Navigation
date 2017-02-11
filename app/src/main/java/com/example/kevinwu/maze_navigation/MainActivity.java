@@ -1,5 +1,6 @@
 package com.example.kevinwu.maze_navigation;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -102,6 +103,15 @@ public class MainActivity extends AppCompatActivity implements InputView.InputEv
 
         }
         return direction;
+    }
+
+    public void startGame (View view) {
+        Intent intent = new Intent(this, Maze.class);
+        startActivity(intent);
+    }
+
+    public void exitGame (View view) {
+        finish();
     }
 }
 

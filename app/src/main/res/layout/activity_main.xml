@@ -43,6 +43,23 @@
         android:layout_below="@+id/textDirection"
         android:layout_alignParentStart="true"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:text="Start"
+        android:onClick="startGame"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/viewDirection" />
+
+    <Button
+        android:text="Exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button"
+        android:layout_alignStart="@+id/viewAction"
+        android:id="@+id/button2"
+        android:onClick="exitGame" />
 
 
 </RelativeLayout>
