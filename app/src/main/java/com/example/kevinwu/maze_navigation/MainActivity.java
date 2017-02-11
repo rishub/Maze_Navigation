@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements InputView.InputEv
     }
 
     public void startGame (View view) {
-        Intent intent = new Intent(this, Maze.class);
+        Intent intent = new Intent(this, Game.class);
         startActivity(intent);
     }
 
