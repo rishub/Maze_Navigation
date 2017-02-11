@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_maze"
+    android:id="@+id/activity_game"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.kevinwu.maze_navigation.Game">
 
+    <com.andretietz.android.controller.DirectionView
+        android:id="@+id/viewDirection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="20dp" />
+
     <com.example.kevinwu.maze_navigation.GameView
+        android:id="@+id/mazeInstance"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewDirection"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="73dp"
+        android:layout_marginBottom="48dp"
+        android:id="@+id/textView" />
 </RelativeLayout>

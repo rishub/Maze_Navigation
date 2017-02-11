@@ -28,7 +28,7 @@ public class GameView extends View {
     float totalCellWidth, totalCellHeight;
     //the finishing point of the maze
     private int mazeFinishX, mazeFinishY;
-    private Maze maze;
+    public static Maze maze;
     private Activity m_context;
     private Paint line = new Paint();
     private Paint red = new Paint();
@@ -53,25 +53,7 @@ public class GameView extends View {
         init(attributeSet, defStyle, maze);
     }
 
-//    public GameView(Context context, Maze maze){
-//        super(context);
-//        this.m_context = (Activity) context;
-//        this.maze = maze;
-//        mazeFinishX = maze.getFinalX();
-//        mazeFinishY = maze.getFinalY();
-//        mazeSizeX = maze.getMazeWidth();
-//        mazeSizeY = maze.getMazeHeight();
-//        line = new Paint();
-//        line.setColor(0x000000);
-//        red = new Paint();
-//        red.setColor(0xff0000);
-//        background = new Paint();
-//        background.setColor(0xdddddd);
-//        setFocusable(true);
-//        this.setFocusableInTouchMode(true);
-//    }
-
-    private void init(AttributeSet attrs, int defStyle, Maze maze){
+        private void init(AttributeSet attrs, int defStyle, Maze maze){
         my_color.setColor(Color.RED);
         background.setColor(Color.LTGRAY);
         red.setColor(Color.RED);
@@ -81,14 +63,25 @@ public class GameView extends View {
         mazeFinishY = maze.getFinalY();
         mazeSizeX = maze.getMazeWidth();
         mazeSizeY = maze.getMazeHeight();
+//        setFocusable(true);
+//        this.setFocusableInTouchMode(true);
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//        canvas.drawRect(0,0,getWidth(),getHeight(), background);
-//        canvas.drawLine(0,0,getWidth(),getHeight(), red);
-//    }
+    public GameView(Context context, Maze maze){
+        super(context);
+        this.m_context = (Activity) context;
+        this.maze = maze;
+        mazeFinishX = maze.getFinalX();
+        mazeFinishY = maze.getFinalY();
+        mazeSizeX = maze.getMazeWidth();
+        mazeSizeY = maze.getMazeHeight();
+        my_color.setColor(Color.RED);
+        background.setColor(Color.LTGRAY);
+        red.setColor(Color.RED);
+        line.setColor(Color.WHITE);
+        setFocusable(true);
+        this.setFocusableInTouchMode(true);
+    }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         width = (w < h)?w:h;
@@ -144,29 +137,29 @@ public class GameView extends View {
                 red);
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent evt) {
-        boolean moved;
-        switch(keyCode) {
-            case KeyEvent.KEYCODE_DPAD_UP:
-                moved = maze.move(Maze.UP);
-                break;
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-                moved = maze.move(Maze.DOWN);
-                break;
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                moved = maze.move(Maze.RIGHT);
-                break;
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-                moved = maze.move(Maze.LEFT);
-                break;
-            default:
-                return super.onKeyDown(keyCode,evt);
-        }
-        if(moved) {
-            //the ball was moved so we'll redraw the view
-            invalidate();
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent evt) {
+//        boolean moved;
+//        switch(keyCode) {
+//            case KeyEvent.KEYCODE_DPAD_UP:
+//                moved = maze.move(Maze.UP);
+//                break;
+//            case KeyEvent.KEYCODE_DPAD_DOWN:
+//                moved = maze.move(Maze.DOWN);
+//                break;
+//            case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                moved = maze.move(Maze.RIGHT);
+//                break;
+//            case KeyEvent.KEYCODE_DPAD_LEFT:
+//                moved = maze.move(Maze.LEFT);
+//                break;
+//            default:
+//                return super.onKeyDown(keyCode,evt);
+//        }
+//        if(moved) {
+//            //the ball was moved so we'll redraw the view
+//            invalidate();
+//        }
+//        return true;
+//    }
 }

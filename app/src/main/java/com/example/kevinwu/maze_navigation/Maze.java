@@ -25,6 +25,7 @@ public class Maze implements Serializable {
     public int getMazeHeight() {
         return sizeY;
     }
+
     public boolean move(int direction) {
         boolean moved = false;
         if(direction == UP) {
