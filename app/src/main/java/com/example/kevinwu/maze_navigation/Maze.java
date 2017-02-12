@@ -1,6 +1,8 @@
 package com.example.kevinwu.maze_navigation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Kevin on 2/10/2017.
@@ -18,6 +20,7 @@ public class Maze implements Serializable {
     private int currentX, currentY;   //stores the current location of the ball
     private int finalX, finalY;       //stores the finishing of the maze
     private boolean gameComplete;
+    private ArrayList<Pair> links;
 
     public int getMazeWidth() {
         return sizeX;
@@ -59,6 +62,7 @@ public class Maze implements Serializable {
         }
         return moved;
     }
+
     public boolean isGameComplete() {
         return gameComplete;
     }
@@ -95,5 +99,13 @@ public class Maze implements Serializable {
     public void setVerticalLines(boolean[][] lines) {
         verticalLines = lines;
         sizeY = verticalLines.length;
+    }
+
+    public ArrayList<Pair> getLinks() {
+        return links;
+    }
+
+    public void setLinks(ArrayList<Pair> links) {
+        this.links = links;
     }
 }

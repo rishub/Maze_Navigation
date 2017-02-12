@@ -17,6 +17,9 @@ import android.widget.TextView;
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 /**
  * Created by Kevin on 2/10/2017.
  */
@@ -37,8 +40,12 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     float totalCellWidth, totalCellHeight;
     //the finishing point of the maze
     private int mazeFinishX, mazeFinishY;
+    //the current point of the player
+    private int currentX, currentY;
     private Maze maze;
     private Activity m_context;
+    private ArrayList<Pair> mazeLinks;
+    private boolean next_map;
     private Paint line = new Paint();
     private Paint red = new Paint();
     private Paint background = new Paint();
@@ -69,6 +76,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         mazeFinishY = maze.getFinalY();
         mazeSizeX = maze.getMazeWidth();
         mazeSizeY = maze.getMazeHeight();
+        mazeLinks = maze.getLinks();
         background.setColor(Color.LTGRAY);
         red.setColor(Color.RED);
         line.setColor(Color.WHITE);
@@ -121,7 +129,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                 }
             }
         }
-        int currentX = maze.getCurrentX(), currentY = maze.getCurrentY();
+        currentX = maze.getCurrentX();
+        currentY = maze.getCurrentY();
         //draw the ball
         canvas.drawCircle((currentX * totalCellWidth) + (cellWidth / 2),   //x of center
                 (currentY * totalCellHeight) + (cellWidth / 2),  //y of center
@@ -183,6 +192,24 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
     private boolean playerMove(String direction){
         boolean moved = false;
+
+        //hard coded link to next maze map
+//        if(currentX == mazeFinishX && currentY == mazeFinishY && direction.equals("Right")){
+//
+//        }
+
+        for(int i = 0; i < mazeLinks.size(); i++){
+            Point point = (Point) mazeLinks.get(i).getPoint();
+            String linkDirection = (String) mazeLinks.get(i).getDirection();
+            if(currentX == point.getX() && currentY == point.getY() &&
+                    direction.equals(linkDirection))
+            {
+                Maze nextMaze = MazeFactory.getMaze(point.getMazeLink());
+                GameView nextGameView = new GameView(m_context, nextMaze);
+                m_context.setContentView(nextGameView);
+            }
+        }
+
         switch(direction) {
             case "Up":
                 moved = maze.move(Maze.UP);
