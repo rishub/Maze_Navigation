@@ -17,15 +17,26 @@
     <com.example.kevinwu.maze_navigation.GameView
         android:id="@+id/mazeInstance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mazeNumber"
+            android:layout_marginBottom="97dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="75dp" />
+    </com.example.kevinwu.maze_navigation.GameView>
 
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/viewDirection"
-        android:layout_alignParentEnd="true"
         android:layout_marginEnd="73dp"
-        android:layout_marginBottom="48dp"
-        android:id="@+id/textView" />
+        android:layout_marginBottom="49dp"
+        android:id="@+id/textView"
+        android:layout_alignBottom="@+id/viewDirection"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

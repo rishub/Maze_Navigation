@@ -28,6 +28,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
     //testing direction buttons
     private TextView textDirection;
+    //display the maze number
+    private TextView mazeNum;
     //width and height of the whole maze and width of lines which
     //make the walls
     private int width, height, lineWidth;
@@ -79,13 +81,14 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         mazeLinks = maze.getLinks();
         background.setColor(Color.LTGRAY);
         red.setColor(Color.RED);
-        line.setColor(Color.WHITE);
+        line.setColor(Color.BLACK);
         setWillNotDraw(false);
 
         LayoutInflater.from(getContext()).inflate(R.layout.activity_game, this);
         DirectionView directionView = (DirectionView) findViewById(R.id.viewDirection);
         directionView.setOnButtonListener(this);
         textDirection = (TextView) findViewById(R.id.textView);
+        mazeNum = (TextView) findViewById(R.id.mazeNumber);
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -136,11 +139,23 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                 (currentY * totalCellHeight) + (cellWidth / 2),  //y of center
                 (cellWidth * 0.45f),                           //radius
                 red);
+
+        // draw the maze link location indicators
+        for(int i = 0; i < mazeLinks.size(); i++){
+            Point point = (Point) mazeLinks.get(i).getPoint();
+            String linkDirection = (String) mazeLinks.get(i).getDirection();
+            canvas.drawText(String.valueOf(linkDirection.charAt(0)),
+                    (point.getX() * totalCellWidth) + (cellWidth * 0.25f),
+                    (point.getY() * totalCellHeight) + (cellHeight * 0.75f),
+                    red);
+        }
         //draw the finishing point indicator
-        canvas.drawText("F",
-                (mazeFinishX * totalCellWidth) + (cellWidth * 0.25f),
-                (mazeFinishY * totalCellHeight) + (cellHeight * 0.75f),
-                red);
+//        canvas.drawText("F",
+//                (mazeFinishX * totalCellWidth) + (cellWidth * 0.25f),
+//                (mazeFinishY * totalCellHeight) + (cellHeight * 0.75f),
+//                red);
+        System.out.println("Maze number: " + maze.getMazeNum());
+        mazeNum.setText(String.format("Maze #%d", maze.getMazeNum()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

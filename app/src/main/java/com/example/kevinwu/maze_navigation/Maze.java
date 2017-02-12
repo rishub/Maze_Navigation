@@ -21,6 +21,7 @@ public class Maze implements Serializable {
     private int finalX, finalY;       //stores the finishing of the maze
     private boolean gameComplete;
     private ArrayList<Pair> links;
+    private int mazeNum;
 
     public int getMazeWidth() {
         return sizeX;
@@ -107,5 +108,11 @@ public class Maze implements Serializable {
 
     public void setLinks(ArrayList<Pair> links) {
         this.links = links;
+    }
+    public void setMazeNum(int x) {
+        mazeNum = x;
+    }
+    public int getMazeNum() {
+        return mazeNum;
     }
 }
