@@ -1,4 +1,4 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.ParcelUuid;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,16 +15,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
+import com.example.kevinwu.maze_navigation.R;
+import com.example.kevinwu.maze_navigation.services.BluetoothService;
+import com.example.kevinwu.maze_navigation.utils.ConnectionUtils;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
@@ -33,8 +30,8 @@ import java.util.UUID;
 
 public class Connection extends AppCompatActivity {
 
-    private BluetoothAdapter BA;
-    private BluetoothSocket deviceConnection = null;
+    public static BluetoothAdapter BA;
+    public static BluetoothSocket deviceConnection = null;
     Button on, off, visible, listBtn, scan;
     //private TextView statusText;
     private ListView listView;
@@ -164,7 +161,7 @@ public class Connection extends AppCompatActivity {
                 unpairBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        unpairDevice(my_devices.get(mPosition));
+                        ConnectionUtils.unpairDevice(my_devices.get(mPosition));
                         Toast.makeText(getApplicationContext(), "Unpaired with " + my_devices.get(mPosition).getName(), Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
@@ -173,7 +170,7 @@ public class Connection extends AppCompatActivity {
                 connectBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        connectDevice(my_devices.get(mPosition).getAddress());
+                        ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress());
                         Toast.makeText(getApplicationContext(), "Connected with " + my_devices.get(mPosition).getName(), Toast.LENGTH_SHORT).show();
                         connectBtn.setText("Connected");
                         connectBtn.setClickable(false);
@@ -183,38 +180,5 @@ public class Connection extends AppCompatActivity {
                 dialog.show();
             }
         });
-    }
-
-    private void unpairDevice(BluetoothDevice device) {
-        try {
-            Method m = device.getClass()
-                    .getMethod("removeBond", (Class[]) null);
-            m.invoke(device, (Object[]) null);
-        } catch (Exception e) {
-            Log.e("KEVIN", e.getMessage());
-        }
-    }
-
-    private void connectDevice(String address) {
-        BluetoothDevice device = BA.getRemoteDevice(address);
-        BluetoothSocket tmp = null;
-        UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
-        // Get a BluetoothSocket for a connection with the
-        // given BluetoothDevice
-        try {
-            tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
-            tmp = (BluetoothSocket) m.invoke(device, 1);
-        } catch (IOException e) {
-            Log.d("KEVIN", "create() failed", e);
-        } catch (Exception e) {
-            Log.d("KEVIN", "failed to do reflection");
-        }
-        deviceConnection = tmp;
-        try {
-            deviceConnection.connect();
-        } catch(Exception e) {
-            Log.d("KEVIN", "failed to make connection with device");
-        }
     }
 }

@@ -1,24 +1,28 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
+import com.example.kevinwu.maze_navigation.R;
+import com.example.kevinwu.maze_navigation.models.Maze;
+import com.example.kevinwu.maze_navigation.models.MazeFactory;
+import com.example.kevinwu.maze_navigation.models.Pair;
+import com.example.kevinwu.maze_navigation.models.PlayerInfo;
+import com.example.kevinwu.maze_navigation.models.Point;
+import com.example.kevinwu.maze_navigation.services.BluetoothService;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by Kevin on 2/10/2017.
@@ -45,6 +49,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     //the current point of the player
     private int currentX, currentY;
     private Maze maze;
+    private PlayerInfo player;
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
     private Paint line = new Paint();
@@ -139,6 +144,11 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                 (cellWidth * 0.45f),                           //radius
                 red);
 
+        player.setPlayerColor(red);
+        player.setPlayerX(currentX);
+        player.setPlayerY(currentY);
+        player.setPlayerMazeNum(maze.getMazeNum());
+
         // draw the maze link location indicators
         for(int i = 0; i < mazeLinks.size(); i++){
             Point point = (Point) mazeLinks.get(i).getPoint();
@@ -206,11 +216,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
     private boolean playerMove(String direction){
         boolean moved = false;
-
-        //hard coded link to next maze map
-//        if(currentX == mazeFinishX && currentY == mazeFinishY && direction.equals("Right")){
-//
-//        }
 
         for(int i = 0; i < mazeLinks.size(); i++){
             Point point = (Point) mazeLinks.get(i).getPoint();

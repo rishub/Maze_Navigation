@@ -1,8 +1,7 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by Kevin on 2/10/2017.

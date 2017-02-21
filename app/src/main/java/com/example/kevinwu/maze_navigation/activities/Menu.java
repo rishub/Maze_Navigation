@@ -1,9 +1,12 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.kevinwu.maze_navigation.R;
+import com.example.kevinwu.maze_navigation.activities.Connection;
 
 public class Menu extends AppCompatActivity {
 
