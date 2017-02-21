@@ -101,6 +101,27 @@ public class Maze implements Serializable {
         sizeY = verticalLines.length;
     }
 
+    public void bombWalls(String orientation, int x, int y) {
+        if (orientation == "Vertical") {
+            verticalLines[x][y] = false;
+        }
+        else if (orientation == "Horizontal") {
+            horizontalLines[x][y] = false;
+        }
+    }
+
+    public boolean isWall(String orientation, int x, int y) {
+        if (orientation == "Vertical") {
+            if (verticalLines[x][y])
+                return true;
+        }
+        else if (orientation == "Horizontal") {
+            if (horizontalLines[x][y])
+                return true;
+        }
+        return false;
+    }
+
     public ArrayList<Pair> getLinks() {
         return links;
     }

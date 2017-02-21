@@ -1,20 +1,15 @@
 package com.example.kevinwu.maze_navigation.views;
 
-import android.content.Intent;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,10 +26,7 @@ import com.example.kevinwu.maze_navigation.models.Item;
 import com.example.kevinwu.maze_navigation.models.Character;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
 
 import static android.R.attr.start;
 
@@ -73,6 +65,9 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
     private TextView numberKeys;
     private TextView numberDynamites;
+
+    private boolean dynamiteClick = false;
+    private boolean keyClick = false;
 
 
     public GameView(Context context) {
@@ -113,6 +108,23 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         LayoutInflater.from(getContext()).inflate(R.layout.activity_game, this);
         DirectionView directionView = (DirectionView) findViewById(R.id.viewDirection);
         directionView.setOnButtonListener(this);
+
+        Button b_key = (Button) findViewById(R.id.item_key_button);
+        b_key.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                keyClick = true;
+            }
+        });
+
+        Button b_dynamite = (Button) findViewById(R.id.item_dynamite_button);
+        b_dynamite.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("CLICK!!!!");
+                dynamiteClick = true;
+            }
+        });
 
         numberKeys = (TextView) findViewById(R.id.item_key);
         numberDynamites = (TextView) findViewById(R.id.item_dynamite);
@@ -229,6 +241,65 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             }
         }
 
+        int arr[] = countItems(character);
+        numberKeys.setText(Integer.toString(arr[0]));
+        numberDynamites.setText(Integer.toString(arr[1]));
+        System.out.println("There are x dynamites: " + arr[1]);
+
+        // Use keys when clicked on
+        if (keyClick && arr[0] > 0) {
+            ArrayList<Item> my_items = character.getInventory();
+            for (Item a: my_items) {
+                if (a.getItemID() == "Key" && !a.isUsed()) {
+                    a.useItem();
+
+                    keyClick = false;
+                    break;
+                }
+            }
+        }
+
+        // Use dynamites when clicked on
+        if (dynamiteClick && arr[1] > 0) {
+            ArrayList<Item> my_items = character.getInventory();
+            for (Item a: my_items) {
+                if (a.getItemID() == "Dynamite" && !a.isUsed()) {
+                    boolean boom = false;
+                    switch (character.getDirection()) {
+                        case "Up":
+                            if (currentY != 0 && maze.isWall("Horizontal", currentY - 1, currentX)) {
+                                maze.bombWalls("Horizontal", currentY - 1, currentX);
+                                boom = true;
+                            }
+                            break;
+                        case "Down":
+                            if (currentY != mazeSizeY - 1 && maze.isWall("Horizontal", currentY, currentX)) {
+                                maze.bombWalls("Horizontal", currentY, currentX);
+                                boom = true;
+                            }
+                            break;
+                        case "Left":
+                            if (currentX != 0 && maze.isWall("Vertical", currentY, currentX - 1)) {
+                                maze.bombWalls("Vertical", currentY, currentX - 1);
+                                boom = true;
+                            }
+                            break;
+                        case "Right":
+                            if (currentX != mazeSizeX - 1 && maze.isWall("Vertical", currentY, currentX)) {
+                                maze.bombWalls("Vertical", currentY, currentX);
+                                boom = true;
+                            }
+                            break;
+                    }
+                    if (boom)
+                        a.useItem();
+
+                    dynamiteClick = false;
+                    break;
+                }
+            }
+        }
+
         if (player != null) {
             player.setPlayerColor(red);
             player.setPlayerX(currentX);
@@ -237,21 +308,19 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
 
         // draw the maze link location indicators
-        for(int i = 0; i < mazeLinks.size(); i++){
-            Point point = (Point) mazeLinks.get(i).getPoint();
-            String linkDirection = (String) mazeLinks.get(i).getDirection();
-            canvas.drawText(String.valueOf(linkDirection.charAt(0)),
-                    (point.getX() * totalCellWidth) + (cellWidth * 0.25f),
-                    (point.getY() * totalCellHeight) + (cellHeight * 0.75f),
-                    red);
+        if (mazeLinks != null) {
+            for (int i = 0; i < mazeLinks.size(); i++) {
+                Point point = (Point) mazeLinks.get(i).getPoint();
+                String linkDirection = (String) mazeLinks.get(i).getDirection();
+                canvas.drawText(String.valueOf(linkDirection.charAt(0)),
+                        (point.getX() * totalCellWidth) + (cellWidth * 0.25f),
+                        (point.getY() * totalCellHeight) + (cellHeight * 0.75f),
+                        red);
+            }
         }
 
         //System.out.println("Maze number: " + maze.getMazeNum());
         mazeNum.setText(String.format("Maze #%d", maze.getMazeNum()));
-
-        int arr[] = countItems(character);
-        numberKeys.setText(Integer.toString(arr[0]));
-        numberDynamites.setText(Integer.toString(arr[1]));
     }
 
     private int[] countItems(Character chara) {
@@ -259,12 +328,14 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         int[] array = new int[2];
         array[0] = 0;
         array[1] = 0;
-        for (int i = 0; i < my_items.size(); i++) {
-            String name = my_items.get(i).getItemID();
-            if (name == "Key")
-                array[0]++;
-            else if (name == "Dynamite")
-                array[1]++;
+        for (Item i : my_items) {
+            if (!i.isUsed()) {
+                String name = i.getItemID();
+                if (name == "Key")
+                    array[0]++;
+                else if (name == "Dynamite")
+                    array[1]++;
+            }
         }
         return array;
     }
@@ -321,15 +392,16 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private boolean playerMove(String direction){
         boolean moved = false;
 
-        for(int i = 0; i < mazeLinks.size(); i++){
-            Point point = (Point) mazeLinks.get(i).getPoint();
-            String linkDirection = (String) mazeLinks.get(i).getDirection();
-            if(currentX == point.getX() && currentY == point.getY() &&
-                    direction.equals(linkDirection))
-            {
-                Maze nextMaze = MazeFactory.getMaze(point.getMazeLink());
-                GameView nextGameView = new GameView(m_context, nextMaze, mazeItems, character);
-                m_context.setContentView(nextGameView);
+        if (mazeLinks != null) {
+            for (int i = 0; i < mazeLinks.size(); i++) {
+                Point point = (Point) mazeLinks.get(i).getPoint();
+                String linkDirection = (String) mazeLinks.get(i).getDirection();
+                if (currentX == point.getX() && currentY == point.getY() &&
+                        direction.equals(linkDirection)) {
+                    Maze nextMaze = MazeFactory.getMaze(point.getMazeLink());
+                    GameView nextGameView = new GameView(m_context, nextMaze, mazeItems, character);
+                    m_context.setContentView(nextGameView);
+                }
             }
         }
 

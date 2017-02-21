@@ -12,7 +12,6 @@ public class Character {
 
     public Character() {
         this.mostRecentDirection = "None";
-        this.isInventoryOpened = false;
         character_Items = new ArrayList<>();
     }
 
@@ -28,19 +27,10 @@ public class Character {
         character_Items.add(new Item(item_id));
     }
 
-    public boolean inventoryOpened(){
-        return isInventoryOpened;
-    }
-
-    public void setInventory(String input){
-        isInventoryOpened = input.equals("Open");
-    }
-
     public ArrayList<Item> getInventory() {
         return character_Items;
     }
 
     private String mostRecentDirection;
-    private boolean isInventoryOpened;
     private ArrayList<Item> character_Items;
 }

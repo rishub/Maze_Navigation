@@ -42,33 +42,63 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal" >
 
-                <TextView
-                    android:text="0"
-                    android:id="@+id/item_key"
-                    android:background="@drawable/key"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textStyle="normal|bold"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/controller_default"
-                    android:textSize="18sp" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:text="0"
-                    android:id="@+id/item_dynamite"
-                    android:background="@drawable/dynamite"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textStyle="normal|bold"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/controller_default"
-                    android:textSize="18sp" />
+                    <TextView
+                        android:text="0"
+                        android:id="@+id/item_key"
+                        android:background="@drawable/key"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textStyle="normal|bold"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/controller_default"
+                        android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/item_key_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".5"
+                        android:background="@android:color/transparent"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:text="0"
+                        android:id="@+id/item_dynamite"
+                        android:background="@drawable/dynamite"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textStyle="normal|bold"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/controller_default"
+                        android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/item_dynamite_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".5"
+                        android:background="@android:color/transparent"
+                        />
+                </RelativeLayout>
 
             </LinearLayout>
         </HorizontalScrollView>

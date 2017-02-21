@@ -1,6 +1,7 @@
 package com.example.kevinwu.maze_navigation.models;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Kevin on 2/10/2017.
@@ -124,16 +125,20 @@ public class MazeFactory {
             Point linkPoint1 = new Point(0,0,4);
             Pair link1 = new Pair(linkPoint1, "Left");
 
+            Point linkPoint2 = new Point(7,5,5);
+            Pair link2 = new Pair(linkPoint2, "Right");
+
             ArrayList<Pair> mazeLinks = new ArrayList<>();
             mazeLinks.add(link);
             mazeLinks.add(link1);
+            mazeLinks.add(link2);
 
             maze.setLinks(mazeLinks);
         }
         if(mazeNo == 4) {
             maze = new Maze();
             boolean[][] vLines = new boolean[][]{
-                    {false, false, true , true , false ,false , false},
+                    {false, false, true , true , false, false, false},
                     {false, true , true , true , true , false, true },
                     {false, true , false, true , true , true , false},
                     {true , false, false, false, true , false, true },
@@ -164,6 +169,79 @@ public class MazeFactory {
             mazeLinks.add(link);
 
             maze.setLinks(mazeLinks);
+        }
+        if(mazeNo == 5) {
+            maze = new Maze();
+            boolean[][] vLines = new boolean[][]{
+                    {false, false, true , true , true , false, false},
+                    {false, false, true , true , false, false, true },
+                    {true , true , false, true , false, true , false},
+                    {true , false, false, false, true , false, true },
+                    {false, true , false, true , false, true , false},
+                    {true , true , true , false, true , true , false},
+                    {false, false, true , true , true , false, false},
+                    {true , false, false, false, false, true , false}
+            };
+            boolean[][] hLines = new boolean[][]{
+                    {true , true , false, false, true , false, true , true },
+                    {false, false, true , false, true , false, false, false},
+                    {true , false, true , false, false, false, true , true },
+                    {false, true , false, true , true , true , false, false},
+                    {false, false, false, false, true , false, false, true },
+                    {false, true , false, true , false, false, true , true },
+                    {false, false, true , false, true , false, true , false}
+            };
+            maze.setVerticalLines(vLines);
+            maze.setHorizontalLines(hLines);
+            maze.setStartPosition(7, 0);
+            maze.setFinalPosition(3, 0);
+            maze.setMazeNum(5);
+
+            Point linkPoint = new Point(4,6,3);
+            Pair link = new Pair(linkPoint, "Down");
+
+            ArrayList<Pair> mazeLinks = new ArrayList<>();
+            mazeLinks.add(link);
+
+            maze.setLinks(mazeLinks);
+        }
+        if(mazeNo == 6) { // Map 5 is a dead end, exiting will put you in a random map
+            maze = new Maze();
+            boolean[][] vLines = new boolean[][]{
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false},
+                    {false, false, false, false, false ,false , false}
+            };
+            boolean[][] hLines = new boolean[][]{
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false},
+                    {false, false, false, false, false, false, false, false}
+            };
+            maze.setVerticalLines(vLines);
+            maze.setHorizontalLines(hLines);
+            maze.setStartPosition(0, 3);
+
+            Random rand = new Random();
+            int  n = rand.nextInt(5) + 1;
+
+            Point linkPoint = new Point(7,3,n);
+            Pair link = new Pair(linkPoint, "Right");
+
+            ArrayList<Pair> mazeLinks = new ArrayList<>();
+            mazeLinks.add(link);
+
+            maze.setLinks(mazeLinks);
+
+            maze.setMazeNum(6);
         }
         return maze;
     }

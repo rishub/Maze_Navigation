@@ -17,6 +17,8 @@ public class ItemFactory {
         items.add(new Item(1, 3, 1, "Key"));
         items.add(new Item(1, 5, 6, "Dynamite"));
         items.add(new Item(2, 6, 5, "Key"));
+        items.add(new Item(5, 4, 0, "Key"));
+        items.add(new Item(1, 2, 1, "Dynamite"));
         return items;
     }
 }
