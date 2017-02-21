@@ -1,4 +1,4 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.models;
 
 import java.util.ArrayList;
 

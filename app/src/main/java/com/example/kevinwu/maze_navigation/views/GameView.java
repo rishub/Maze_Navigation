@@ -27,6 +27,8 @@ import com.example.kevinwu.maze_navigation.models.MazeFactory;
 import com.example.kevinwu.maze_navigation.models.Pair;
 import com.example.kevinwu.maze_navigation.models.PlayerInfo;
 import com.example.kevinwu.maze_navigation.models.Point;
+import com.example.kevinwu.maze_navigation.models.Item;
+import com.example.kevinwu.maze_navigation.models.Character;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
 
 import java.lang.reflect.Array;
@@ -227,10 +229,12 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             }
         }
 
-        player.setPlayerColor(red);
-        player.setPlayerX(currentX);
-        player.setPlayerY(currentY);
-        player.setPlayerMazeNum(maze.getMazeNum());
+        if (player != null) {
+            player.setPlayerColor(red);
+            player.setPlayerX(currentX);
+            player.setPlayerY(currentY);
+            player.setPlayerMazeNum(maze.getMazeNum());
+        }
 
         // draw the maze link location indicators
         for(int i = 0; i < mazeLinks.size(); i++){

@@ -10,6 +10,9 @@ import com.example.kevinwu.maze_navigation.services.BluetoothService;
 import com.example.kevinwu.maze_navigation.views.GameView;
 import com.example.kevinwu.maze_navigation.models.Maze;
 import com.example.kevinwu.maze_navigation.models.MazeFactory;
+import com.example.kevinwu.maze_navigation.models.Item;
+import com.example.kevinwu.maze_navigation.models.ItemFactory;
+import com.example.kevinwu.maze_navigation.models.Character;
 import com.example.kevinwu.maze_navigation.R;
 
 public class Game extends AppCompatActivity{

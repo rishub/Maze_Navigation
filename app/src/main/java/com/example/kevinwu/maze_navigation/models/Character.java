@@ -1,6 +1,7 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.models;
 
-import java.io.Serializable;
+import com.example.kevinwu.maze_navigation.models.Item;
+
 import java.util.ArrayList;
 
 /**
@@ -32,10 +33,7 @@ public class Character {
     }
 
     public void setInventory(String input){
-        if (input.equals("Open"))
-            isInventoryOpened = true;
-        else
-            isInventoryOpened = false;
+        isInventoryOpened = input.equals("Open");
     }
 
     public ArrayList<Item> getInventory() {
