@@ -14,8 +14,8 @@ public class Menu extends AppCompatActivity {
 
     }
 
-    public void startGame (View view) {
-        Intent intent = new Intent(this, Game.class);
+    public void connect (View view) {
+        Intent intent = new Intent(this, Connection.class);
         startActivity(intent);
     }
 

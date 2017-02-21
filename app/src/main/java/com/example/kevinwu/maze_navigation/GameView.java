@@ -47,7 +47,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private Maze maze;
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
-    private boolean next_map;
     private Paint line = new Paint();
     private Paint red = new Paint();
     private Paint background = new Paint();

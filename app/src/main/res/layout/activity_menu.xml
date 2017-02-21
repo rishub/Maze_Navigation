@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button"
         android:text="Start"
-        android:onClick="startGame"
+        android:onClick="connect"
         android:layout_marginEnd="29dp"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/button2" />
