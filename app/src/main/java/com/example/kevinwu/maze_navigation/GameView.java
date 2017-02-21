@@ -1,24 +1,34 @@
 package com.example.kevinwu.maze_navigation;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
+
+import static android.R.attr.start;
 
 /**
  * Created by Kevin on 2/10/2017.
@@ -47,9 +57,14 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private Maze maze;
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
+    private ArrayList<Item> mazeItems;
     private Paint line = new Paint();
     private Paint red = new Paint();
-    private Paint background = new Paint();
+    private Character character;
+
+    private TextView numberKeys;
+    private TextView numberDynamites;
+
 
     public GameView(Context context) {
         super(context);
@@ -69,7 +84,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private void init(AttributeSet attrs, int defStyle) {
     }
 
-    public GameView(Context context, Maze maze) {
+    public GameView(Context context, Maze maze, ArrayList<Item> item, Character chara) {
         super(context);
         this.m_context = (Activity) context;
         this.maze = maze;
@@ -78,14 +93,21 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         mazeSizeX = maze.getMazeWidth();
         mazeSizeY = maze.getMazeHeight();
         mazeLinks = maze.getLinks();
-        background.setColor(Color.LTGRAY);
+        mazeItems = item;
         red.setColor(Color.RED);
-        line.setColor(Color.BLACK);
+        line.setColor(getResources().getColor(R.color.brown, null));
+        line.setStrokeWidth(8);
         setWillNotDraw(false);
+
+        character = chara;
 
         LayoutInflater.from(getContext()).inflate(R.layout.activity_game, this);
         DirectionView directionView = (DirectionView) findViewById(R.id.viewDirection);
         directionView.setOnButtonListener(this);
+
+        numberKeys = (TextView) findViewById(R.id.item_key);
+        numberDynamites = (TextView) findViewById(R.id.item_dynamite);
+
         textDirection = (TextView) findViewById(R.id.textView);
         mazeNum = (TextView) findViewById(R.id.mazeNumber);
     }
@@ -105,7 +127,11 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     protected void onDraw(Canvas canvas) {
         //fill in the background
         super.onDraw(canvas);
-        canvas.drawRect(0, 0, width, height, background);
+
+        Drawable d = getResources().getDrawable(R.drawable.ground, null);
+        d.setBounds(0, 0, width, height);
+        d.draw(canvas);
+
         boolean[][] hLines = maze.getHorizontalLines();
         boolean[][] vLines = maze.getVerticalLines();
         //iterate over the boolean arrays to draw walls
@@ -113,6 +139,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             for (int j = 0; j < mazeSizeY; j++) {
                 float x = j * totalCellWidth;
                 float y = i * totalCellHeight;
+
                 if (j < mazeSizeX - 1 && vLines[i][j]) {
                     //we'll draw a vertical line
                     canvas.drawLine(x + cellWidth,   //start X
@@ -133,11 +160,65 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
         currentX = maze.getCurrentX();
         currentY = maze.getCurrentY();
-        //draw the ball
-        canvas.drawCircle((currentX * totalCellWidth) + (cellWidth / 2),   //x of center
-                (currentY * totalCellHeight) + (cellWidth / 2),  //y of center
-                (cellWidth * 0.45f),                           //radius
-                red);
+
+        // Draw the character
+        Drawable b;
+        switch (character.getDirection()) {
+            case "Up":
+                b = getResources().getDrawable(R.drawable.player_up, null);
+                break;
+            case "Down":
+                b = getResources().getDrawable(R.drawable.player_down, null);
+                break;
+            case "Left":
+                b = getResources().getDrawable(R.drawable.player_left, null);
+                break;
+            case "Right":
+                b = getResources().getDrawable(R.drawable.player_right, null);
+                break;
+            default:
+                b = getResources().getDrawable(R.drawable.player_down, null);
+                break;
+        }
+        float xPos = (currentX * totalCellWidth) + (cellWidth / 2);
+        float yPos = (currentY * totalCellHeight) + (cellWidth / 2);
+        b.setBounds((int) (xPos - cellWidth/2), (int) (yPos - cellHeight/2), (int) (xPos + cellWidth/2), (int) (yPos  + cellHeight/2));
+        b.draw(canvas);
+
+        // Draw the items
+        Drawable g;
+        Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
+        if (mazeItems != null) {
+            for (int i = 0; i < mazeItems.size(); i++) {
+                if (!mazeItems.get(i).getPickedUp()) {
+                    int[] item_pos = mazeItems.get(i).getItemPosition();
+                    if (item_pos[0] != maze.getMazeNum())
+                        continue;
+                    String item_id = mazeItems.get(i).getItemID();
+                    if (currentX == item_pos[1] && currentY == item_pos[2]) {
+                        System.out.println("Picked up item");
+                        mazeItems.get(i).pickUp();
+                        character.addItemToInventory(item_id);
+                        continue;
+                    }
+                    switch (item_id) {  // Currently only have two items
+                        case "Key":
+                            g = getResources().getDrawable(R.drawable.key, null);
+                            break;
+                        case "Dynamite":
+                            g = getResources().getDrawable(R.drawable.dynamite, null);
+                            break;
+                        default:
+                            g = transparentDrawable;
+                            break;
+                    }
+                    float xItemPos = (item_pos[1] * totalCellWidth) + (cellWidth / 2);
+                    float yItemPos = (item_pos[2] * totalCellHeight) + (cellWidth / 2);
+                    g.setBounds((int) (xItemPos - cellWidth / 3), (int) (yItemPos - cellWidth / 3), (int) (xItemPos + cellHeight / 3), (int) (yItemPos + cellHeight / 3));
+                    g.draw(canvas);
+                }
+            }
+        }
 
         // draw the maze link location indicators
         for(int i = 0; i < mazeLinks.size(); i++){
@@ -148,13 +229,28 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                     (point.getY() * totalCellHeight) + (cellHeight * 0.75f),
                     red);
         }
-        //draw the finishing point indicator
-//        canvas.drawText("F",
-//                (mazeFinishX * totalCellWidth) + (cellWidth * 0.25f),
-//                (mazeFinishY * totalCellHeight) + (cellHeight * 0.75f),
-//                red);
-        System.out.println("Maze number: " + maze.getMazeNum());
+
+        //System.out.println("Maze number: " + maze.getMazeNum());
         mazeNum.setText(String.format("Maze #%d", maze.getMazeNum()));
+
+        int arr[] = countItems(character);
+        numberKeys.setText(Integer.toString(arr[0]));
+        numberDynamites.setText(Integer.toString(arr[1]));
+    }
+
+    private int[] countItems(Character chara) {
+        ArrayList<Item> my_items = chara.getInventory();
+        int[] array = new int[2];
+        array[0] = 0;
+        array[1] = 0;
+        for (int i = 0; i < my_items.size(); i++) {
+            String name = my_items.get(i).getItemID();
+            if (name == "Key")
+                array[0]++;
+            else if (name == "Dynamite")
+                array[1]++;
+        }
+        return array;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,6 +297,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                 break;
 
         }
+        if (direction != "NONE")
+            character.setDirection(direction);
         return direction;
     }
 
@@ -219,7 +317,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                     direction.equals(linkDirection))
             {
                 Maze nextMaze = MazeFactory.getMaze(point.getMazeLink());
-                GameView nextGameView = new GameView(m_context, nextMaze);
+                GameView nextGameView = new GameView(m_context, nextMaze, mazeItems, character);
                 m_context.setContentView(nextGameView);
             }
         }

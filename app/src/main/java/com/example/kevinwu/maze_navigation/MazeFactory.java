@@ -1,5 +1,6 @@
 package com.example.kevinwu.maze_navigation;
 
+import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class MazeFactory {
             mazeLinks.add(link1);
 
             maze.setLinks(mazeLinks);
+
         }
         //other mazes
         if(mazeNo == 2) {
@@ -136,23 +138,23 @@ public class MazeFactory {
         if(mazeNo == 4) {
             maze = new Maze();
             boolean[][] vLines = new boolean[][]{
-                    {false, false, true , true , false ,false , false},
-                    {false, true , true , true , true , false, true },
-                    {false, true , false, true , true , true , false},
-                    {true , false, false, false, true , false, true },
-                    {false, false, true , false, false, true , false},
-                    {true , true , true , false, true , true , true },
-                    {false, true , true , false, true , false, true },
+                    {false, false, true, true, false, false, false},
+                    {false, true, true, true, true, false, true},
+                    {false, true, false, true, true, true, false},
+                    {true, false, false, false, true, false, true},
+                    {false, false, true, false, false, true, false},
+                    {true, true, true, false, true, true, true},
+                    {false, true, true, false, true, false, true},
                     {false, false, false, false, false, false, false}
             };
             boolean[][] hLines = new boolean[][]{
-                    {true , false, false, false, false, true , true , false},
-                    {false, true , false, false, true , false, false, false},
-                    {true , false, true , true , false, false, true , true },
-                    {false, true , false, true , true , true , false, false},
-                    {false, false, false, false, true , false, false, true },
-                    {true , false, false, true , false, false, false, false},
-                    {false, true , true , false, true , true , true , false}
+                    {true, false, false, false, false, true, true, false},
+                    {false, true, false, false, true, false, false, false},
+                    {true, false, true, true, false, false, true, true},
+                    {false, true, false, true, true, true, false, false},
+                    {false, false, false, false, true, false, false, true},
+                    {true, false, false, true, false, false, false, false},
+                    {false, true, true, false, true, true, true, false}
             };
             maze.setVerticalLines(vLines);
             maze.setHorizontalLines(hLines);
@@ -160,7 +162,7 @@ public class MazeFactory {
             maze.setFinalPosition(3, 0);
             maze.setMazeNum(4);
 
-            Point linkPoint = new Point(3,0,3);
+            Point linkPoint = new Point(3, 0, 3);
             Pair link = new Pair(linkPoint, "Up");
 
             ArrayList<Pair> mazeLinks = new ArrayList<>();
@@ -168,6 +170,7 @@ public class MazeFactory {
 
             maze.setLinks(mazeLinks);
         }
+
         return maze;
     }
 
