@@ -4,7 +4,7 @@
     android:id="@+id/activity_game"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kevinwu.maze_navigation.Game">
+    tools:context="com.example.kevinwu.maze_navigation.activities.Game">
 
     <com.andretietz.android.controller.DirectionView
         android:id="@+id/viewDirection"
@@ -14,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="20dp" />
 
-    <com.example.kevinwu.maze_navigation.GameView
+    <com.example.kevinwu.maze_navigation.views.GameView
         android:id="@+id/mazeInstance"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -72,7 +72,7 @@
 
             </LinearLayout>
         </HorizontalScrollView>
-    </com.example.kevinwu.maze_navigation.GameView>
+    </com.example.kevinwu.maze_navigation.views.GameView>
 
     <TextView
         android:text="TextView"

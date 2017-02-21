@@ -1,4 +1,4 @@
-package com.example.kevinwu.maze_navigation;
+package com.example.kevinwu.maze_navigation.models;
 
 /**
  * Created by Kevin on 2/11/2017.
