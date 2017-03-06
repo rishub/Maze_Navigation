@@ -21,13 +21,13 @@ public class Game extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_game);
-        Maze maze = MazeFactory.getMaze(1); // creates a maze instance
+        ArrayList<Maze> maze = MazeFactory.getMazes(); // creates a maze instance
         ArrayList<Item> item = ItemFactory.getMazeItems(); // creates the list of items in the maze
         // the items are long-lasting, they are not recreated when the game view is recreated
         Character character = new Character();
         // depending on which part of the maze we are in we can create the maze
         // we can have a 5x5 maze. we can have an enum struct
-        GameView view = new GameView(Game.this, maze, item, character);
+        GameView view = new GameView(Game.this, maze, item, character, 0);
         setContentView(view);
     }
 }

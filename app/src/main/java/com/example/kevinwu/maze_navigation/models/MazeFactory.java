@@ -9,241 +9,312 @@ import java.util.Random;
 
 public class MazeFactory {
 
-    public static Maze getMaze(int mazeNo) {
-        Maze maze = null;
-        if(mazeNo == 1) {
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {true ,false,false,false,true ,false,false},
-                    {true ,false,false,true ,false,true ,true },
-                    {false,true ,false,false,true ,false,false},
-                    {false,true ,true ,false,false,false,true },
-                    {true ,false,false,false,true ,true ,false},
-                    {false,true ,false,false,true ,false,false},
-                    {false,true ,true ,true ,true ,true ,false},
-                    {false,false,false,true ,false,false,false}
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {false,false,true ,true ,false,false,true ,false},
-                    {false,false,true ,true ,false,true ,false,false},
-                    {true ,true ,false,true ,true ,false,true ,true },
-                    {false,false,true ,false,true ,true ,false,false},
-                    {false,true ,true ,true ,true ,false,true ,true },
-                    {true ,false,false,true ,false,false,true ,false},
-                    {false,true ,false,false,false,true ,false,true }
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(0, 0);
-            maze.setFinalPosition(7,7);
-            maze.setMazeNum(1);
+    public static ArrayList<Maze> getMazes() {
+        ArrayList<Maze> mazeList = new ArrayList<>();
+        Maze maze = new Maze();
 
-            Point linkPoint = new Point(7,7,2);
-            Pair link = new Pair(linkPoint, "Right");
+        for (int mazeNo = 1; mazeNo < 7; mazeNo++) {
+            if(mazeNo == 1) {
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {true ,false,false,false,true ,false,false},
+                        {true ,false,false,true ,false,true ,true },
+                        {false,true ,false,false,true ,false,false},
+                        {false,true ,true ,false,false,false,true },
+                        {true ,false,false,false,true ,true ,false},
+                        {false,true ,false,false,true ,false,false},
+                        {false,true ,true ,true ,true ,true ,false},
+                        {false,false,false,true ,false,false,false}
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {false,false,true ,true ,false,false,true ,false},
+                        {false,false,true ,true ,false,true ,false,false},
+                        {true ,true ,false,true ,true ,false,true ,true },
+                        {false,false,true ,false,true ,true ,false,false},
+                        {false,true ,true ,true ,true ,false,true ,true },
+                        {true ,false,false,true ,false,false,true ,false},
+                        {false,true ,false,false,false,true ,false,true }
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false }
+                };
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(0, 0);
+                maze.setFinalPosition(7,7);
+                maze.setMazeNum(1);
 
-            Point linkPoint1 = new Point(7,6,2);
-            Pair link1 = new Pair(linkPoint1, "Right");
+                Point linkPoint = new Point(7,7,2);
+                Pair link = new Pair(linkPoint, "Right");
 
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-            mazeLinks.add(link1);
+                Point linkPoint1 = new Point(7,6,2);
+                Pair link1 = new Pair(linkPoint1, "Right");
 
-            maze.setLinks(mazeLinks);
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+                mazeLinks.add(link1);
 
+                maze.setLinks(mazeLinks);
+
+            }
+            //other mazes
+            if(mazeNo == 2) {
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {false,false,false,true ,false,false,false},
+                        {false,false,true ,false,true ,false,false},
+                        {false,false,true ,true ,false,false,false},
+                        {false,false,true ,true ,true ,false,false},
+                        {false,false,true ,false,true ,false,false},
+                        {true ,false,false,true ,false,true ,false},
+                        {true ,false,true ,true ,false,false,false},
+                        {false,false,true ,false,false,false,true }
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {false,true ,true ,true ,false,true ,true ,true },
+                        {true ,true ,false,false,true ,true ,true ,false},
+                        {false,true ,true ,false,false,false,true ,true },
+                        {true ,true ,false,false,false,true ,true ,false},
+                        {false,true ,true ,true ,true ,false,true ,false},
+                        {false,false,true ,false,false,true ,true ,true },
+                        {false,true ,false,false,true ,true ,false,false}
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,true ,false }
+                };
+
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(0, 7);
+                maze.setFinalPosition(7, 0);
+                maze.setMazeNum(2);
+
+                Point linkPoint = new Point(7,0,1);
+                Pair link = new Pair(linkPoint, "Right");
+
+                Point linkPoint1 = new Point(3,0,3);
+                Pair link1 = new Pair(linkPoint1, "Up");
+
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+                mazeLinks.add(link1);
+
+                maze.setLinks(mazeLinks);
+
+            }
+            if(mazeNo == 3) {
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {false, true , false, true , false ,true , false},
+                        {false, false, true , true , true , true , true },
+                        {true , false, false, true , true , false, true },
+                        {true , false, false, false, true , false, true },
+                        {true , false, true , true , false, false, false},
+                        {false, true , true , false, true , true , true },
+                        {false, false, false, false, true , true , true },
+                        {false, false, true , false, false, true , false}
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {true , false, false, false, false, false, false, false},
+                        {false, true , true , false, false, true , false, false},
+                        {false, false, true , true , false, false, true , true },
+                        {false, true , true , true , true , true , false, false},
+                        {false, false, false, false, false, true , false, true },
+                        {true , true , false, true , false, false, false, false},
+                        {false, true , true , false, true , false, false, false}
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false }
+                };
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(3, 7);
+                maze.setFinalPosition(7, 2);
+                maze.setMazeNum(3);
+
+                Point linkPoint = new Point(7,2,1);
+                Pair link = new Pair(linkPoint, "Right");
+
+                Point linkPoint1 = new Point(0,0,4);
+                Pair link1 = new Pair(linkPoint1, "Left");
+
+                Point linkPoint2 = new Point(7,5,5);
+                Pair link2 = new Pair(linkPoint2, "Right");
+
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+                mazeLinks.add(link1);
+                mazeLinks.add(link2);
+
+                maze.setLinks(mazeLinks);
+            }
+            if(mazeNo == 4) {
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {false, false, true , true , false, false, false},
+                        {false, true , true , true , true , false, true },
+                        {false, true , false, true , true , true , false},
+                        {true , false, false, false, true , false, true },
+                        {false, false, true , false, false, true , false},
+                        {true , true , true , false, true , true , true },
+                        {false, true , true , false, true , false, true },
+                        {false, false, false, false, false, false, false}
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {true , false, false, false, false, true , true , false},
+                        {false, true , false, false, true , false, false, false},
+                        {true , false, true , true , false, false, true , true },
+                        {false, true , false, true , true , true , false, false},
+                        {false, false, false, false, true , false, false, true },
+                        {true , false, false, true , false, false, false, false},
+                        {false, true , true , false, true , true , true , false}
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false }
+                };
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(7, 0);
+                maze.setFinalPosition(3, 0);
+                maze.setMazeNum(4);
+
+                Point linkPoint = new Point(3,0,3);
+                Pair link = new Pair(linkPoint, "Up");
+
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+
+                maze.setLinks(mazeLinks);
+            }
+            if(mazeNo == 5) {
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {false, false, true , true , true , false, false},
+                        {false, false, true , true , false, false, true },
+                        {true , true , false, true , false, true , false},
+                        {true , false, false, false, true , false, true },
+                        {false, true , false, true , false, true , false},
+                        {true , true , true , false, true , true , false},
+                        {false, false, true , true , true , false, false},
+                        {true , false, false, false, false, true , false}
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {true , true , false, false, true , false, true , true },
+                        {false, false, true , false, true , false, false, false},
+                        {true , false, true , false, false, false, true , true },
+                        {false, true , false, true , true , true , false, false},
+                        {false, false, false, false, true , false, false, true },
+                        {false, true , false, true , false, false, true , true },
+                        {false, false, true , false, true , false, true , false}
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false},
+                        {false,false,false,false,false,false,false }
+                };
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(7, 0);
+                maze.setFinalPosition(3, 0);
+                maze.setMazeNum(5);
+
+                Point linkPoint = new Point(4,6,3);
+                Pair link = new Pair(linkPoint, "Down");
+
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+
+                maze.setLinks(mazeLinks);
+            }
+            if(mazeNo == 6) { // Map 5 is a dead end, exiting will put you in a random map
+                maze = new Maze();
+                boolean[][] vLines = new boolean[][]{
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false},
+                        {false, false, false, false, false ,false, false}
+                };
+                boolean[][] hLines = new boolean[][]{
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false, false}
+                };
+                boolean[][] vDoors = new boolean[][]{
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false},
+                        {false, false, false, false, false, false, false }
+                };
+                maze.setVerticalLines(vLines);
+                maze.setHorizontalLines(hLines);
+                maze.setVerticalDoors(vDoors);
+                maze.setStartPosition(0, 3);
+
+                Random rand = new Random();
+                int n = rand.nextInt(5) + 1;
+
+                Point linkPoint = new Point(7,3,n);
+                Pair link = new Pair(linkPoint, "Right");
+
+                ArrayList<Pair> mazeLinks = new ArrayList<>();
+                mazeLinks.add(link);
+
+                maze.setLinks(mazeLinks);
+
+                maze.setMazeNum(6);
+            }
+            mazeList.add(maze);
         }
-        //other mazes
-        if(mazeNo == 2) {
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {false,false,false,true ,false,false,false},
-                    {false,false,true ,false,true ,false,false},
-                    {false,false,true ,true ,false,false,false},
-                    {false,false,true ,true ,true ,false,false},
-                    {false,false,true ,false,true ,false,false},
-                    {true ,false,false,true ,false,true ,false},
-                    {true ,false,true ,true ,false,false,false},
-                    {false,false,true ,false,false,false,true }
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {false,true ,true ,true ,false,true ,true ,true },
-                    {true ,true ,false,false,true ,true ,true ,false},
-                    {false,true ,true ,false,false,false,true ,true },
-                    {true ,true ,false,false,false,true ,true ,false},
-                    {false,true ,true ,true ,true ,false,true ,false},
-                    {false,false,true ,false,false,true ,true ,true },
-                    {false,true ,false,false,true ,true ,false,false}
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(0, 7);
-            maze.setFinalPosition(7, 0);
-            maze.setMazeNum(2);
-
-            Point linkPoint = new Point(7,0,1);
-            Pair link = new Pair(linkPoint, "Right");
-
-            Point linkPoint1 = new Point(3,0,3);
-            Pair link1 = new Pair(linkPoint1, "Up");
-
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-            mazeLinks.add(link1);
-
-            maze.setLinks(mazeLinks);
-
-        }
-        if(mazeNo == 3) {
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {false, true , false, true , false ,true , false},
-                    {false, false, true , true , true , true , true },
-                    {true , false, false, true , true , false, true },
-                    {true , false, false, false, true , false, true },
-                    {true , false, true , true , false, false, false},
-                    {false, true , true , false, true , true , true },
-                    {false, false, false, false, true , true , true },
-                    {false, false, true , false, false, true , false}
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {true , false, false, false, false, false, false, false},
-                    {false, true , true , false, false, true , false, false},
-                    {false, false, true , true , false, false, true , true },
-                    {false, true , true , true , true , true , false, false},
-                    {false, false, false, false, false, true , false, true },
-                    {true , true , false, true , false, false, false, false},
-                    {false, true , true , false, true , false, false, false}
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(3, 7);
-            maze.setFinalPosition(7, 2);
-            maze.setMazeNum(3);
-
-            Point linkPoint = new Point(7,2,1);
-            Pair link = new Pair(linkPoint, "Right");
-
-            Point linkPoint1 = new Point(0,0,4);
-            Pair link1 = new Pair(linkPoint1, "Left");
-
-            Point linkPoint2 = new Point(7,5,5);
-            Pair link2 = new Pair(linkPoint2, "Right");
-
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-            mazeLinks.add(link1);
-            mazeLinks.add(link2);
-
-            maze.setLinks(mazeLinks);
-        }
-        if(mazeNo == 4) {
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {false, false, true , true , false, false, false},
-                    {false, true , true , true , true , false, true },
-                    {false, true , false, true , true , true , false},
-                    {true , false, false, false, true , false, true },
-                    {false, false, true , false, false, true , false},
-                    {true , true , true , false, true , true , true },
-                    {false, true , true , false, true , false, true },
-                    {false, false, false, false, false, false, false}
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {true , false, false, false, false, true , true , false},
-                    {false, true , false, false, true , false, false, false},
-                    {true , false, true , true , false, false, true , true },
-                    {false, true , false, true , true , true , false, false},
-                    {false, false, false, false, true , false, false, true },
-                    {true , false, false, true , false, false, false, false},
-                    {false, true , true , false, true , true , true , false}
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(7, 0);
-            maze.setFinalPosition(3, 0);
-            maze.setMazeNum(4);
-
-            Point linkPoint = new Point(3,0,3);
-            Pair link = new Pair(linkPoint, "Up");
-
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-
-            maze.setLinks(mazeLinks);
-        }
-        if(mazeNo == 5) {
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {false, false, true , true , true , false, false},
-                    {false, false, true , true , false, false, true },
-                    {true , true , false, true , false, true , false},
-                    {true , false, false, false, true , false, true },
-                    {false, true , false, true , false, true , false},
-                    {true , true , true , false, true , true , false},
-                    {false, false, true , true , true , false, false},
-                    {true , false, false, false, false, true , false}
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {true , true , false, false, true , false, true , true },
-                    {false, false, true , false, true , false, false, false},
-                    {true , false, true , false, false, false, true , true },
-                    {false, true , false, true , true , true , false, false},
-                    {false, false, false, false, true , false, false, true },
-                    {false, true , false, true , false, false, true , true },
-                    {false, false, true , false, true , false, true , false}
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(7, 0);
-            maze.setFinalPosition(3, 0);
-            maze.setMazeNum(5);
-
-            Point linkPoint = new Point(4,6,3);
-            Pair link = new Pair(linkPoint, "Down");
-
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-
-            maze.setLinks(mazeLinks);
-        }
-        if(mazeNo == 6) { // Map 5 is a dead end, exiting will put you in a random map
-            maze = new Maze();
-            boolean[][] vLines = new boolean[][]{
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false},
-                    {false, false, false, false, false ,false , false}
-            };
-            boolean[][] hLines = new boolean[][]{
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false}
-            };
-            maze.setVerticalLines(vLines);
-            maze.setHorizontalLines(hLines);
-            maze.setStartPosition(0, 3);
-
-            Random rand = new Random();
-            int  n = rand.nextInt(5) + 1;
-
-            Point linkPoint = new Point(7,3,n);
-            Pair link = new Pair(linkPoint, "Right");
-
-            ArrayList<Pair> mazeLinks = new ArrayList<>();
-            mazeLinks.add(link);
-
-            maze.setLinks(mazeLinks);
-
-            maze.setMazeNum(6);
-        }
-        return maze;
+        return mazeList;
     }
-
 }
