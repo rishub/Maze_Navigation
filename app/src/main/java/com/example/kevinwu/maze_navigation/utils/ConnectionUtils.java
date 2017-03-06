@@ -24,7 +24,7 @@ public class ConnectionUtils {
         }
     }
 
-    public static void connectDevice(String address) {
+    public static BluetoothSocket connectDevice(String address) {
         BluetoothDevice device = Connection.BA.getRemoteDevice(address);
         BluetoothSocket tmp = null;
         UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
@@ -39,11 +39,14 @@ public class ConnectionUtils {
         } catch (Exception e) {
             Log.d("KEVIN", "failed to do reflection");
         }
-        Connection.deviceConnection = tmp;
+        //Connection.deviceConnection = tmp;
         try {
-            Connection.deviceConnection.connect();
+            //Connection.deviceConnection.connect();
+            tmp.connect();
         } catch(Exception e) {
             Log.d("KEVIN", "failed to make connection with device");
         }
+
+        return tmp;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.kevinwu.maze_navigation.activities;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,8 @@ import com.example.kevinwu.maze_navigation.utils.ConnectionUtils;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,9 +37,10 @@ public class Connection extends AppCompatActivity {
     public static BluetoothAdapter BA;
     public static BluetoothSocket deviceConnection = null;
     Button on, off, visible, listBtn, scan;
-    //private TextView statusText;
     private ListView listView;
     private Set<BluetoothDevice> pairedDevices;
+    public static ArrayList<BluetoothSocket> connectedDevices;
+    private Boolean multiplayerMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,16 @@ public class Connection extends AppCompatActivity {
         visible = (Button) findViewById(R.id.connection_visible);
         scan = (Button) findViewById(R.id.connection_scan);
         listView = (ListView) findViewById(R.id.myListView);
+
+        connectedDevices = new ArrayList<>();
+        multiplayerMode = false;
     }
 
     public void startGame(View view) {
+        if(multiplayerMode) {
+            Intent serviceIntent = new Intent(this, BluetoothService.class);
+            this.startService(serviceIntent);
+        }
         Intent intent = new Intent(Connection.this, Game.class);
         startActivity(intent);
     }
@@ -84,6 +96,12 @@ public class Connection extends AppCompatActivity {
     public void scan(View view) {
         final ArrayList foundDevices = new ArrayList<>();
 
+        Toast.makeText(getApplicationContext(), "Scanning", Toast.LENGTH_LONG).show();
+
+        if(BA.isDiscovering()){
+            BA.cancelDiscovery();
+        }
+
         BA.startDiscovery();
 
         // Discover new devices
@@ -93,37 +111,49 @@ public class Connection extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 // When discovery finds a device
+                final Map<String, BluetoothDevice> devices = new HashMap<>();
+
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     // Get the bluetoothDevice object from the Intent
                     // might have to remove final, used for testing purposes
-                    final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if(device != null) {
+                        // Get the "RSSI" to get the signal strength as integer,
+                        // but should be displayed in "dBm" units
+                        int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
 
-                    // Get the "RSSI" to get the signal strength as integer,
-                    // but should be displayed in "dBm" units
-                    int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                        // Create the device object and add it to the arrayList of devices
+                        if(device.getName() != null && (device.getName().length() > 0)) {
+                            foundDevices.add(device.getName());
+                            devices.put(device.getName(), device);
 
-                    // Create the device object and add it to the arrayList of devices
-                    foundDevices.add(device.getName());
+                            // 1. Pass context and data to the custom adapter
+                            final ArrayAdapter adapter = new ArrayAdapter(Connection.this, android.R.layout.simple_list_item_1, foundDevices);
 
-                    // 1. Pass context and data to the custom adapter
-                    final ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, foundDevices);
-
-                    // 2. setListAdapter
-                    listView.setAdapter(adapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            device.createBond();
-                            Toast.makeText(getApplicationContext(), "Attempting to pair with " + device.getName(), Toast.LENGTH_SHORT).show();
+                            // 2. setListAdapter
+                            listView.setAdapter(adapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    String deviceName = (String) parent.getItemAtPosition(position);
+                                    devices.get(deviceName).createBond();
+                                    Toast.makeText(getApplicationContext(), "Attempting to pair with " + deviceName, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
-                    });
+                    }
+                }
+
+                if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    if (foundDevices.isEmpty()) {
+                        Toast.makeText(Connection.this, "No Devices", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         };
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-
     }
 
     public void list(View v) {
@@ -170,7 +200,10 @@ public class Connection extends AppCompatActivity {
                 connectBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        multiplayerMode = true;
                         ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress());
+                        connectedDevices.add(ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress()));
+                        Log.d("KEVIN", "connected devices are instantiated" + connectedDevices.get(0));
                         Toast.makeText(getApplicationContext(), "Connected with " + my_devices.get(mPosition).getName(), Toast.LENGTH_SHORT).show();
                         connectBtn.setText("Connected");
                         connectBtn.setClickable(false);
@@ -181,4 +214,5 @@ public class Connection extends AppCompatActivity {
             }
         });
     }
+
 }
