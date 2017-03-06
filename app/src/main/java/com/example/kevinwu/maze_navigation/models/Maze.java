@@ -15,12 +15,15 @@ public class Maze implements Serializable {
 
     private boolean[][] verticalLines;
     private boolean[][] horizontalLines;
+    private boolean[][] verticalDoors;
     private int sizeX, sizeY;         //stores the width and height of the maze
     private int currentX, currentY;   //stores the current location of the ball
     private int finalX, finalY;       //stores the finishing of the maze
     private boolean gameComplete;
     private ArrayList<Pair> links;
     private int mazeNum;
+    private int startX;
+    private int startY;
 
     public int getMazeWidth() {
         return sizeX;
@@ -44,13 +47,13 @@ public class Maze implements Serializable {
             }
         }
         if(direction == RIGHT) {
-            if(currentX != sizeX-1 && !verticalLines[currentY][currentX]) {
+            if(currentX != sizeX-1 && !verticalLines[currentY][currentX] && !verticalDoors[currentY][currentX]) {
                 currentX++;
                 moved = true;
             }
         }
         if(direction == LEFT) {
-            if(currentX != 0 && !verticalLines[currentY][currentX-1]) {
+            if(currentX != 0 && !verticalLines[currentY][currentX-1] && !verticalDoors[currentY][currentX-1]) {
                 currentX--;
                 moved = true;
             }
@@ -67,6 +70,8 @@ public class Maze implements Serializable {
         return gameComplete;
     }
     public void setStartPosition(int x, int y) {
+        startX = x;
+        startY = y;
         currentX = x;
         currentY = y;
     }
@@ -79,6 +84,10 @@ public class Maze implements Serializable {
     public void setFinalPosition(int x, int y) {
         finalX = x;
         finalY = y;
+    }
+    public void resetPosition() {
+        currentX = startX;
+        currentY = startY;
     }
     public int getCurrentX() {
         return currentX;
@@ -101,25 +110,52 @@ public class Maze implements Serializable {
         sizeY = verticalLines.length;
     }
 
-    public void bombWalls(String orientation, int x, int y) {
-        if (orientation == "Vertical") {
-            verticalLines[x][y] = false;
-        }
-        else if (orientation == "Horizontal") {
-            horizontalLines[x][y] = false;
-        }
+    public boolean[][] getVerticalDoors() { return verticalDoors; }
+    public void setVerticalDoors(boolean[][] doors) {
+        verticalDoors = doors;
+        sizeY = verticalDoors.length;
     }
 
     public boolean isWall(String orientation, int x, int y) {
-        if (orientation == "Vertical") {
+        if (orientation.equals("Vertical")) {
             if (verticalLines[x][y])
                 return true;
         }
-        else if (orientation == "Horizontal") {
+        else if (orientation.equals("Horizontal")) {
             if (horizontalLines[x][y])
                 return true;
         }
         return false;
+    }
+
+    public void bombWalls(String orientation, int x, int y) {
+        if (orientation.equals("Vertical")) {
+            verticalLines[x][y] = false;
+        }
+        else if (orientation.equals("Horizontal")) {
+            horizontalLines[x][y] = false;
+        }
+    }
+
+    public boolean isDoor(String orientation, int x, int y) {
+        if (orientation.equals("Vertical")) {
+            if (verticalDoors[x][y])
+                return true;
+        }
+//        else if (orientation.equals("Horizontal")) {
+//            if (horizontalLines[x][y])
+//                return true;
+//        }
+        return false;
+    }
+
+    public void openDoors(String orientation, int x, int y) {
+        if (orientation.equals("Vertical")) {
+            verticalDoors[x][y] = false;
+        }
+//        else if (orientation.equals("Horizontal")) {
+//            horizontalLines[x][y] = false;
+//        }
     }
 
     public ArrayList<Pair> getLinks() {
