@@ -60,7 +60,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     //the current point of the player
     private int currentX, currentY;
     private Maze maze;
-    private PlayerInfo player;
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
     private ArrayList<Item> mazeItems;
@@ -343,13 +342,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                     break;
                 }
             }
-        }
-
-        if (player != null) {
-            player.setPlayerColor(red);
-            player.setPlayerX(currentX);
-            player.setPlayerY(currentY);
-            player.setPlayerMazeNum(maze.getMazeNum());
         }
 
         // draw the maze link location indicators
