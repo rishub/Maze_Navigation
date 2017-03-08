@@ -14,10 +14,20 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="20dp" />
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="73dp"
+        android:layout_marginBottom="49dp"
+        android:id="@+id/textView"
+        android:layout_alignBottom="@+id/viewDirection"
+        android:layout_alignParentEnd="true" />
+
     <com.example.kevinwu.maze_navigation.views.GameView
         android:id="@+id/mazeInstance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <TextView
             android:text="TextView"
@@ -31,20 +41,30 @@
 
         <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginBottom="68dp"
+            android:layout_height="wrap_content"
             android:background="@android:drawable/screen_background_dark_transparent"
+            android:layout_marginBottom="58dp"
             android:layout_above="@+id/mazeNumber"
             android:layout_alignParentStart="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/item_key_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".5"
+                        android:background="@android:color/transparent"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true" />
 
                     <TextView
                         android:text="0"
@@ -52,28 +72,30 @@
                         android:background="@drawable/key"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textStyle="normal|bold"
                         android:textAlignment="textEnd"
                         android:textColor="@color/controller_default"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/item_key_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight=".5"
-                        android:background="@android:color/transparent"
-                        />
+                        android:textSize="18sp"
+                        android:layout_alignBottom="@+id/item_key_button"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/item_dynamite_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".5"
+                        android:background="@android:color/transparent"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true" />
 
                     <TextView
                         android:text="0"
@@ -81,36 +103,18 @@
                         android:background="@drawable/dynamite"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textStyle="normal|bold"
                         android:textAlignment="textEnd"
                         android:textColor="@color/controller_default"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/item_dynamite_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight=".5"
-                        android:background="@android:color/transparent"
-                        />
+                        android:textSize="18sp"
+                        android:layout_alignBottom="@+id/item_dynamite_button"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignTop="@+id/item_dynamite_button" />
                 </RelativeLayout>
 
             </LinearLayout>
         </HorizontalScrollView>
     </com.example.kevinwu.maze_navigation.views.GameView>
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="73dp"
-        android:layout_marginBottom="49dp"
-        android:id="@+id/textView"
-        android:layout_alignBottom="@+id/viewDirection"
-        android:layout_alignParentEnd="true" />
 </RelativeLayout>
