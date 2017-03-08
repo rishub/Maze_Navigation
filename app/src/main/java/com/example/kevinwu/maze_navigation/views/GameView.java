@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.ThreadMode;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.ThreadMode;
+
 import static android.R.attr.start;
 
 /**
