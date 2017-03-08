@@ -29,6 +29,5 @@ public class Game extends AppCompatActivity{
         // we can have a 5x5 maze. we can have an enum struct
         GameView view = new GameView(Game.this, maze, item, character);
         setContentView(view);
-        startService(new Intent(getBaseContext(), BluetoothService.class));
     }
 }

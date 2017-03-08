@@ -11,10 +11,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kevinwu.maze_navigation.activities.Connection;
+import com.example.kevinwu.maze_navigation.models.AcceptThread;
+import com.example.kevinwu.maze_navigation.models.ConnectedThread;
 import com.example.kevinwu.maze_navigation.models.PlayerInfo;
-import com.example.kevinwu.maze_navigation.activities.Game;
 import com.example.kevinwu.maze_navigation.utils.ConnectionUtils;
-import com.example.kevinwu.maze_navigation.views.GameView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ import java.util.ArrayList;
 public class BluetoothService extends Service {
 
     private PlayerInfo currPlayer;
-    private ArrayList<BluetoothSocket> connectedSockets;
-    private PlayerInfo mockPlayer;
+    private ConnectedThread connectionThread;
+    private ConnectedThread serverThread;
 
     @Nullable
     @Override
@@ -38,52 +38,79 @@ public class BluetoothService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        connectedSockets = new ArrayList<>();
+
         Log.d("KEVIN", "Service is instantiated");
-        for(int i = 0; i < Connection.connectedDevices.size(); i++)
-        {
-           Log.d("Kevin", "Connected Device " + Connection.connectedDevices.get(i));
-            connectedSockets.add(Connection.connectedDevices.get(i));
-        }
+
         currPlayer = null;
-        mockPlayer = new PlayerInfo(0, 0, 1);
+
+        // before connecting always cancel discovery to speed up things
+        Connection.BA.cancelDiscovery();
+
+        // check if the socket is connected, if not connect now
+        try {
+            if (!Connection.serverSocket.isConnected()) {
+                Connection.serverSocket.connect();
+            }
+            // send the message through the socket
+            // create a new thread to do this
+            serverThread = new ConnectedThread(Connection.serverSocket);
+            // write will write out the message to the output stream
+            serverThread.start();
+        } catch (IOException e){
+            Log.d("Kevin", "Server Socket cannot connect");
+        }
+
+        try {
+            if (!Connection.clientSocket.isConnected()) {
+                Connection.clientSocket.connect();
+            }
+            // send the message through the socket
+            // create a new thread to do this
+            connectionThread = new ConnectedThread(Connection.clientSocket);
+            // write will write out the message to the output stream
+            connectionThread.start();
+        } catch (IOException e){
+            Log.d("Kevin", "Client Socket cannot connect");
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // fill the message from the data received from GameView.
+        String message = "";
+        String direction = "";
+
         Bundle data = intent.getExtras();
-        // currPlayer data
-        if(data != null) {
+        if (data != null) {
+            String tmp = data.getString("Direction");
+            if (tmp != null) {
+                direction = tmp;
+            }
+
             currPlayer = data.getParcelable("PlayerInfo");
-            if(currPlayer != null) {
-                Log.d("Kevin", "Maze: " + currPlayer.getPlayerMazeNum() +
-                        " Player X " + currPlayer.getPlayerX() +
-                        " Player Y " + currPlayer.getPlayerY());
+            if (currPlayer != null) {
+                message += currPlayer.getPlayerMazeNum() + "," + currPlayer.getPlayerX() + "," +
+                        currPlayer.getPlayerY() + "," + direction + ",";
             }
         }
 
-        //send currPlayer data through socket
-        try {
-            for(int i = 0; i < connectedSockets.size(); i++){
-                connectedSockets.get(i).connect();
-            }
-        }catch(Exception e) {
-            Log.d("Kevin", "Socket connection problem");
+        if (connectionThread != null) {
+            connectionThread.write(message.getBytes());
         }
 
-        //get otherPlayer data from socket
+        if (serverThread != null) {
+            serverThread.write(message.getBytes());
+        }
 
-        //send otherPlayer info back to maze
-        Intent intent1 = new Intent("MockPlayer");
-        intent1.putExtra("MockPlayerInfo", mockPlayer);
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     @Override
     public void onDestroy() {
+        //stop the threads
+        connectionThread.cancel();
+        serverThread.cancel();
         super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
+
 }

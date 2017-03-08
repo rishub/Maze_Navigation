@@ -2,9 +2,13 @@ package com.example.kevinwu.maze_navigation.utils;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.kevinwu.maze_navigation.activities.Connection;
+import com.example.kevinwu.maze_navigation.models.AcceptThread;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -14,6 +18,10 @@ import java.util.UUID;
  */
 
 public class ConnectionUtils {
+
+    // standard UUID for bluetooth connections
+    public static UUID STANDARD_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
     public static void unpairDevice(BluetoothDevice device) {
         try {
             Method m = device.getClass()
@@ -24,29 +32,39 @@ public class ConnectionUtils {
         }
     }
 
-    public static BluetoothSocket connectDevice(String address) {
+    // creates and connects a socket
+    // also returns socket
+    public static BluetoothSocket connectDevice(String address, Context context) {
         BluetoothDevice device = Connection.BA.getRemoteDevice(address);
-        BluetoothSocket tmp = null;
-        UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
+
+        // Accepts a connection
+        AcceptThread acceptThread = new AcceptThread(STANDARD_UUID);
+        acceptThread.start();
+
+        // Client code
+        BluetoothSocket clientSocket = null;
         // Get a BluetoothSocket for a connection with the
         // given BluetoothDevice
         try {
-            tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
-            tmp = (BluetoothSocket) m.invoke(device, 1);
+            // must be secured (must be paired before connecting) otherwise it won't work
+            clientSocket = device.createRfcommSocketToServiceRecord(STANDARD_UUID);
         } catch (IOException e) {
             Log.d("KEVIN", "create() failed", e);
         } catch (Exception e) {
             Log.d("KEVIN", "failed to do reflection");
         }
-        //Connection.deviceConnection = tmp;
+
+        // establish a connection
         try {
-            //Connection.deviceConnection.connect();
-            tmp.connect();
+            clientSocket.connect();
+            Toast.makeText(context, "Connected with " + device.getName(), Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
-            Log.d("KEVIN", "failed to make connection with device");
+            Log.d("KEVIN", "failed to make connection with device " + e.toString());
+            Toast.makeText(context, "Failed to connect with " + device.getName(), Toast.LENGTH_SHORT).show();
         }
 
-        return tmp;
+        Log.d("Kevin", "Bluetooth socket: " + clientSocket);
+
+        return clientSocket;
     }
 }

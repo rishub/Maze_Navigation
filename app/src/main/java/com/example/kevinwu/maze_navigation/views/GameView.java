@@ -30,9 +30,13 @@ import com.example.kevinwu.maze_navigation.models.PlayerInfo;
 import com.example.kevinwu.maze_navigation.models.Point;
 import com.example.kevinwu.maze_navigation.models.Item;
 import com.example.kevinwu.maze_navigation.models.Character;
+import com.example.kevinwu.maze_navigation.models.RemotePlayerMoveEvent;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
 
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.ThreadMode;
 
 import static android.R.attr.start;
 
@@ -61,7 +65,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     //the current point of the player
     private int currentX, currentY;
     private Maze maze;
-    private PlayerInfo player;
     private PlayerInfo mPlayer; //mock
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
@@ -70,6 +73,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private Paint red = new Paint();
     private Character character;
 
+    private String remoteCharacterDir; // no point in making a class, since we only need the direction
     private TextView numberKeys;
     private TextView numberDynamites;
 
@@ -107,13 +111,13 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         mazeItems = item;
         red.setColor(Color.RED);
         line.setColor(getResources().getColor(R.color.brown, null));
+        //line.setColor(Color.BLUE);
         line.setStrokeWidth(8);
         setWillNotDraw(false);
 
         character = chara;
-        player = null;
-        mPlayer = null;
-
+        mPlayer = new PlayerInfo(0,0,1);
+        remoteCharacterDir = "";
         LayoutInflater.from(getContext()).inflate(R.layout.activity_game, this);
         DirectionView directionView = (DirectionView) findViewById(R.id.viewDirection);
         directionView.setOnButtonListener(this);
@@ -140,6 +144,22 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
         textDirection = (TextView) findViewById(R.id.textView);
         mazeNum = (TextView) findViewById(R.id.mazeNumber);
+
+        // register this service as a listener
+        EventBus.getDefault().register(this);
+    }
+
+    public void onEvent(RemotePlayerMoveEvent event){
+        String[] parts = event.getMessage().split(",");
+        String mazeNum = parts[0];
+        String playerX = parts[1];
+        String playerY = parts[2];
+        remoteCharacterDir = parts[3];
+
+        mPlayer.setPlayerMazeNum(Integer.parseInt(mazeNum));
+        mPlayer.setPlayerX(Integer.parseInt(playerX));
+        mPlayer.setPlayerY(Integer.parseInt(playerY));
+        postInvalidate();
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -215,14 +235,33 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         b.setBounds((int) (xPos - cellWidth/2), (int) (yPos - cellHeight/2), (int) (xPos + cellWidth/2), (int) (yPos  + cellHeight/2));
         b.draw(canvas);
 
-        //Draw other players
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(
-                mMessageReceiver, new IntentFilter("MockPlayer"));
+        // send our data out
+        Intent serviceIntent = new Intent(getContext(), BluetoothService.class);
+        serviceIntent.putExtra("PlayerInfo", new PlayerInfo(Math.round(xPos), Math.round(yPos), maze.getMazeNum()));
+        serviceIntent.putExtra("Direction", character.getDirection());
+        getContext().startService(serviceIntent);
 
-        if(mPlayer != null) {
-            Drawable mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
-            float xPosition = (mPlayer.getPlayerX() * totalCellWidth) + (cellWidth / 2);
-            float yPosition = (mPlayer.getPlayerY() * totalCellHeight) + (cellWidth / 2);
+        if(mPlayer != null && mPlayer.getPlayerMazeNum() == maze.getMazeNum()) {
+            Drawable mockPlayer;
+            switch (remoteCharacterDir) {
+                case "Up":
+                    mockPlayer = getResources().getDrawable(R.drawable.player_up, null);
+                    break;
+                case "Down":
+                    mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
+                    break;
+                case "Left":
+                    mockPlayer = getResources().getDrawable(R.drawable.player_left, null);
+                    break;
+                case "Right":
+                    mockPlayer = getResources().getDrawable(R.drawable.player_right, null);
+                    break;
+                default:
+                    mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
+                    break;
+            }
+            float xPosition = mPlayer.getPlayerX();
+            float yPosition = mPlayer.getPlayerY();
             mockPlayer.setBounds((int) (xPosition - cellWidth/2), (int) (yPosition - cellHeight/2),
                     (int) (xPosition + cellWidth/2), (int) (yPosition  + cellHeight/2));
             mockPlayer.draw(canvas);
@@ -322,17 +361,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             }
         }
 
-//        if (player != null) {
-//            //player.setPlayerColor(red);
-//            player.setPlayerX(currentX);
-//            player.setPlayerY(currentY);
-//            player.setPlayerMazeNum(maze.getMazeNum());
-//        }
-
-        Intent serviceIntent = new Intent(getContext(), BluetoothService.class);
-        serviceIntent.putExtra("PlayerInfo", new PlayerInfo(currentX, currentX, maze.getMazeNum()));
-        getContext().startService(serviceIntent);
-
         // draw the maze link location indicators
         if (mazeLinks != null) {
             for (int i = 0; i < mazeLinks.size(); i++) {
@@ -365,17 +393,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
         return array;
     }
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle data = intent.getExtras();
-            if(data != null) {
-                PlayerInfo mockPlayer = data.getParcelable("MockPlayerInfo");
-                mPlayer = mockPlayer;
-            }
-        }
-    };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///////////// Controller Methods //////////////////////////////////////////////////////////////
@@ -458,6 +475,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
         if(moved) {
             //the ball was moved so we'll redraw the view
+            //start the service only when you move to update the location
             invalidate();
         }
         return true;
