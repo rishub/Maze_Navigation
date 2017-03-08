@@ -24,22 +24,19 @@ import com.example.kevinwu.maze_navigation.R;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
 import com.example.kevinwu.maze_navigation.utils.ConnectionUtils;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public class Connection extends AppCompatActivity {
 
     public static BluetoothAdapter BA;
-    public static BluetoothSocket deviceConnection = null;
     Button on, off, visible, listBtn, scan;
     private ListView listView;
     private Set<BluetoothDevice> pairedDevices;
-    public static ArrayList<BluetoothSocket> connectedDevices;
+    public static BluetoothSocket clientSocket;
+    public static BluetoothSocket serverSocket;
     private Boolean multiplayerMode;
 
     @Override
@@ -54,7 +51,8 @@ public class Connection extends AppCompatActivity {
         scan = (Button) findViewById(R.id.connection_scan);
         listView = (ListView) findViewById(R.id.myListView);
 
-        connectedDevices = new ArrayList<>();
+        clientSocket = null;
+        serverSocket = null;
         multiplayerMode = false;
     }
 
@@ -87,14 +85,12 @@ public class Connection extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Turned off", Toast.LENGTH_LONG).show();
     }
 
-
     public void visible(View view) {
         Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         startActivityForResult(getVisible, 0);
     }
 
     public void scan(View view) {
-        final ArrayList foundDevices = new ArrayList<>();
 
         Toast.makeText(getApplicationContext(), "Scanning", Toast.LENGTH_LONG).show();
 
@@ -102,21 +98,24 @@ public class Connection extends AppCompatActivity {
             BA.cancelDiscovery();
         }
 
-        BA.startDiscovery();
+        // stores all the found devices into an arraylist, map
+        // adds them each time the receiver calls back
+        final ArrayList foundDevices = new ArrayList<>();
+        final Map<String, BluetoothDevice> devices = new HashMap<>();
 
         // Discover new devices
         // Create a BroadcastReceiver for ACTION_FOUND
         final BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+
                 String action = intent.getAction();
                 // When discovery finds a device
-                final Map<String, BluetoothDevice> devices = new HashMap<>();
 
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     // Get the bluetoothDevice object from the Intent
                     // might have to remove final, used for testing purposes
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if(device != null) {
                         // Get the "RSSI" to get the signal strength as integer,
                         // but should be displayed in "dBm" units
@@ -151,15 +150,32 @@ public class Connection extends AppCompatActivity {
                 }
             }
         };
+
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(mReceiver, filter);
+
+        //goes to app settings and turns on the location so that you can scan.
+        int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        BA.startDiscovery();
     }
 
     public void list(View v) {
+        // returns arraylist of paired devices
         pairedDevices = BA.getBondedDevices();
 
-        final ArrayList<BluetoothDevice> my_devices=  new ArrayList<>();
+        // copy of paired devices to access in this function for more isolation
+        final ArrayList<BluetoothDevice> my_devices = new ArrayList<>();
+
+        // string arraylist for the listview
         ArrayList list = new ArrayList();
 
         for (BluetoothDevice bt : pairedDevices) {
@@ -174,17 +190,19 @@ public class Connection extends AppCompatActivity {
         }
 
         final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
-
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final int mPosition = position;
+
+                // create an alert dialog for the user to choose which option
+                // instantiate buttons for the dialog
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(Connection.this);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_action, null);
                 Button unpairBtn = (Button) mView.findViewById(R.id.dialog_action_unpair);
                 final Button connectBtn = (Button) mView.findViewById(R.id.dialog_action_connect);
-
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
 
@@ -192,7 +210,8 @@ public class Connection extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         ConnectionUtils.unpairDevice(my_devices.get(mPosition));
-                        Toast.makeText(getApplicationContext(), "Unpaired with " + my_devices.get(mPosition).getName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Unpaired with " + my_devices.get(mPosition).getName(),
+                                Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });
@@ -201,12 +220,8 @@ public class Connection extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         multiplayerMode = true;
-                        ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress());
-                        connectedDevices.add(ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress()));
-                        Log.d("KEVIN", "connected devices are instantiated" + connectedDevices.get(0));
-                        Toast.makeText(getApplicationContext(), "Connected with " + my_devices.get(mPosition).getName(), Toast.LENGTH_SHORT).show();
-                        connectBtn.setText("Connected");
-                        connectBtn.setClickable(false);
+                        clientSocket = ConnectionUtils.connectDevice(my_devices.get(mPosition).getAddress(),
+                                                                                        getApplicationContext());
                     }
                 });
 

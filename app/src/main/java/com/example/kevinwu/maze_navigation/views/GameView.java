@@ -1,24 +1,23 @@
 package com.example.kevinwu.maze_navigation.views;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.graphics.Matrix;
 
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
@@ -61,8 +60,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     //the current point of the player
     private int currentX, currentY;
     private Maze maze;
-    private PlayerInfo player;
-    private PlayerInfo mPlayer; //mock
     private Activity m_context;
     private ArrayList<Pair> mazeLinks;
     private ArrayList<Item> mazeItems;
@@ -115,8 +112,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         setWillNotDraw(false);
 
         character = chara;
-        player = null;
-        mPlayer = null;
 
         LayoutInflater.from(getContext()).inflate(R.layout.activity_game, this);
         DirectionView directionView = (DirectionView) findViewById(R.id.viewDirection);
@@ -227,19 +222,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         float yPos = (currentY * totalCellHeight) + (cellWidth / 2);
         b.setBounds((int) (xPos - cellWidth/2), (int) (yPos - cellHeight/2), (int) (xPos + cellWidth/2), (int) (yPos  + cellHeight/2));
         b.draw(canvas);
-
-        //Draw other players
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(
-                mMessageReceiver, new IntentFilter("MockPlayer"));
-
-        if(mPlayer != null) {
-            Drawable mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
-            float xPosition = (mPlayer.getPlayerX() * totalCellWidth) + (cellWidth / 2);
-            float yPosition = (mPlayer.getPlayerY() * totalCellHeight) + (cellWidth / 2);
-            mockPlayer.setBounds((int) (xPosition - cellWidth/2), (int) (yPosition - cellHeight/2),
-                    (int) (xPosition + cellWidth/2), (int) (yPosition  + cellHeight/2));
-            mockPlayer.draw(canvas);
-        }
 
         // Draw the items
         Drawable g;
@@ -362,17 +344,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             }
         }
 
-//        if (player != null) {
-//            //player.setPlayerColor(red);
-//            player.setPlayerX(currentX);
-//            player.setPlayerY(currentY);
-//            player.setPlayerMazeNum(maze.getMazeNum());
-//        }
-
-        Intent serviceIntent = new Intent(getContext(), BluetoothService.class);
-        serviceIntent.putExtra("PlayerInfo", new PlayerInfo(currentX, currentX, maze.getMazeNum()));
-        getContext().startService(serviceIntent);
-
         // draw the maze link location indicators
         if (mazeLinks != null) {
             for (int i = 0; i < mazeLinks.size(); i++) {
@@ -405,17 +376,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         return array;
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle data = intent.getExtras();
-            if(data != null) {
-                PlayerInfo mockPlayer = data.getParcelable("MockPlayerInfo");
-                mPlayer = mockPlayer;
-            }
-        }
-    };
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///////////// Controller Methods //////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +384,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     public void onInputEvent(View view, int buttons) {
         switch (view.getId()) {
             case R.id.viewDirection:
-                //Log.d("Kevin", "buttons: " + buttons);
                 textDirection.setText(String.format("Action: %s", directionButtonsToString(buttons)));
                 playerMove(directionButtonsToString(buttons)); // player can go up down left right
                 break;
