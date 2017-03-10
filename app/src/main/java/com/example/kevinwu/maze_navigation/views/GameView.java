@@ -33,7 +33,6 @@ import com.example.kevinwu.maze_navigation.models.Character;
 import com.example.kevinwu.maze_navigation.models.RemotePlayerMoveEvent;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
 import java.util.ArrayList;
-
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.ThreadMode;
 
