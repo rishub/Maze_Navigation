@@ -37,7 +37,7 @@ public class Connection extends AppCompatActivity {
     private Set<BluetoothDevice> pairedDevices;
     public static BluetoothSocket clientSocket;
     public static BluetoothSocket serverSocket;
-    private Boolean multiplayerMode;
+    public static Boolean multiplayerMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +62,6 @@ public class Connection extends AppCompatActivity {
             this.startService(serviceIntent);
         }
         Intent intent = new Intent(Connection.this, Game.class);
-        startActivity(intent);
-    }
-
-    public void backToMenu(View view) {
-        Intent intent = new Intent(Connection.this, Menu.class);
         startActivity(intent);
     }
 

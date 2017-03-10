@@ -11,52 +11,14 @@
     tools:context="com.example.kevinwu.maze_navigation.activities.Connection">
 
     <Button
-        android:text="Start Game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="74dp"
-        android:layout_marginBottom="68dp"
-        android:id="@+id/start_button"
-        android:onClick="startGame" />
-
-    <Button
-        android:text="Go Back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/start_button"
-        android:layout_toEndOf="@+id/start_button"
-        android:layout_marginStart="20dp"
-        android:id="@+id/back_button"
-        android:onClick="backToMenu" />
-
-    <Button
         android:text="Turn On"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/connection_on"
-        android:onClick="on" />
-
-    <Button
-        android:text="Get Visible "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/connection_on"
-        android:id="@+id/connection_visible"
-        android:onClick="visible" />
-
-    <Button
-        android:text="List Devices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/connection_visible"
-        android:id="@+id/connection_list_devices"
-        android:onClick="list" />
+        android:onClick="on"
+        android:layout_alignEnd="@+id/connection_off" />
 
     <Button
         android:text="Turn Off"
@@ -76,12 +38,41 @@
         android:id="@+id/myListView" />
 
     <Button
+        android:text="Get Visible "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/connection_visible"
+        android:onClick="visible"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/connection_on" />
+
+    <Button
+        android:text="List Devices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/connection_list_devices"
+        android:onClick="list"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/connection_visible" />
+
+    <Button
         android:text="scan devices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/connection_scan"
-        android:layout_below="@+id/connection_visible"
-        android:layout_toEndOf="@+id/connection_on"
-        android:onClick="scan" />
+        android:onClick="scan"
+        android:layout_alignBaseline="@+id/connection_off"
+        android:layout_alignBottom="@+id/connection_off"
+        android:layout_toEndOf="@+id/connection_on" />
+
+    <Button
+        android:text="Start Game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
+        android:id="@+id/start_button"
+        android:onClick="startGame"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
