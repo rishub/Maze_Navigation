@@ -49,6 +49,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private TextView textDirection;
     //display the maze number
     private TextView mazeNum;
+    //display the username
+    private TextView username;
     //width and height of the whole maze and width of lines which
     //make the walls
     private int width, height, lineWidth;
@@ -146,6 +148,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
         textDirection = (TextView) findViewById(R.id.textView);
         mazeNum = (TextView) findViewById(R.id.mazeNumber);
+        username = (TextView) findViewById(R.id.username);
+        username.setText(character.getUsername());
 
         // register this service as a listener
         EventBus.getDefault().register(this);
@@ -415,6 +419,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
 
         mazeNum.setText(String.format("Maze #%d", maze.getMazeNum()));
+
     }
 
     private int[] countItems(Character chara) {

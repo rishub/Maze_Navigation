@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import com.example.kevinwu.maze_navigation.R;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
@@ -38,6 +39,7 @@ public class Connection extends AppCompatActivity {
     public static BluetoothSocket clientSocket;
     public static BluetoothSocket serverSocket;
     public static Boolean multiplayerMode;
+    public static EditText usernameEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class Connection extends AppCompatActivity {
         visible = (Button) findViewById(R.id.connection_visible);
         scan = (Button) findViewById(R.id.connection_scan);
         listView = (ListView) findViewById(R.id.myListView);
+        usernameEditText = (EditText) findViewById(R.id.editText);
 
         clientSocket = null;
         serverSocket = null;
@@ -61,8 +64,13 @@ public class Connection extends AppCompatActivity {
             Intent serviceIntent = new Intent(this, BluetoothService.class);
             this.startService(serviceIntent);
         }
-        Intent intent = new Intent(Connection.this, Game.class);
-        startActivity(intent);
+
+        if(this.usernameEditText.getText().toString().equals("")){
+            Toast.makeText(getApplicationContext(), "Enter username", Toast.LENGTH_LONG).show();
+        } else {
+            Intent intent = new Intent(Connection.this, Game.class);
+            startActivity(intent);
+        }
     }
 
     public void on(View view) {

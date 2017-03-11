@@ -31,6 +31,11 @@ public class Character {
         return character_Items;
     }
 
+    public void setUsername(String username) { this.username = username; }
+
+    public String getUsername() { return this.username; }
+
     private String mostRecentDirection;
     private ArrayList<Item> character_Items;
+    private String username;
 }
