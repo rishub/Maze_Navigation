@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
 import com.example.kevinwu.maze_navigation.R;
+import com.example.kevinwu.maze_navigation.activities.Connection;
 import com.example.kevinwu.maze_navigation.models.Maze;
 import com.example.kevinwu.maze_navigation.models.MazeFactory;
 import com.example.kevinwu.maze_navigation.models.Pair;
@@ -51,6 +52,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private TextView textDirection;
     //display the maze number
     private TextView mazeNum;
+    //display the username
+    private TextView username;
     //width and height of the whole maze and width of lines which
     //make the walls
     private int width, height, lineWidth;
@@ -148,6 +151,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
         textDirection = (TextView) findViewById(R.id.textView);
         mazeNum = (TextView) findViewById(R.id.mazeNumber);
+        username = (TextView) findViewById(R.id.username);
+        username.setText(character.getUsername());
 
         // register this service as a listener
         EventBus.getDefault().register(this);
@@ -250,35 +255,37 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         b.draw(canvas);
 
         // send our data out
-        Intent serviceIntent = new Intent(getContext(), BluetoothService.class);
-        serviceIntent.putExtra("PlayerInfo", new PlayerInfo(Math.round(xPos), Math.round(yPos), maze.getMazeNum()));
-        serviceIntent.putExtra("Direction", character.getDirection());
-        getContext().startService(serviceIntent);
+        if(Connection.multiplayerMode) {
+            Intent serviceIntent = new Intent(getContext(), BluetoothService.class);
+            serviceIntent.putExtra("PlayerInfo", new PlayerInfo(Math.round(xPos), Math.round(yPos), maze.getMazeNum()));
+            serviceIntent.putExtra("Direction", character.getDirection());
+            getContext().startService(serviceIntent);
 
-        if(mPlayer != null && mPlayer.getPlayerMazeNum() == maze.getMazeNum()) {
-            Drawable mockPlayer;
-            switch (remoteCharacterDir) {
-                case "Up":
-                    mockPlayer = getResources().getDrawable(R.drawable.player_up, null);
-                    break;
-                case "Down":
-                    mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
-                    break;
-                case "Left":
-                    mockPlayer = getResources().getDrawable(R.drawable.player_left, null);
-                    break;
-                case "Right":
-                    mockPlayer = getResources().getDrawable(R.drawable.player_right, null);
-                    break;
-                default:
-                    mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
-                    break;
+            if (mPlayer != null && mPlayer.getPlayerMazeNum() == maze.getMazeNum()) {
+                Drawable mockPlayer;
+                switch (remoteCharacterDir) {
+                    case "Up":
+                        mockPlayer = getResources().getDrawable(R.drawable.player_up, null);
+                        break;
+                    case "Down":
+                        mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
+                        break;
+                    case "Left":
+                        mockPlayer = getResources().getDrawable(R.drawable.player_left, null);
+                        break;
+                    case "Right":
+                        mockPlayer = getResources().getDrawable(R.drawable.player_right, null);
+                        break;
+                    default:
+                        mockPlayer = getResources().getDrawable(R.drawable.player_down, null);
+                        break;
+                }
+                float xPosition = mPlayer.getPlayerX();
+                float yPosition = mPlayer.getPlayerY();
+                mockPlayer.setBounds((int) (xPosition - cellWidth / 2), (int) (yPosition - cellHeight / 2),
+                        (int) (xPosition + cellWidth / 2), (int) (yPosition + cellHeight / 2));
+                mockPlayer.draw(canvas);
             }
-            float xPosition = mPlayer.getPlayerX();
-            float yPosition = mPlayer.getPlayerY();
-            mockPlayer.setBounds((int) (xPosition - cellWidth/2), (int) (yPosition - cellHeight/2),
-                    (int) (xPosition + cellWidth/2), (int) (yPosition  + cellHeight/2));
-            mockPlayer.draw(canvas);
         }
 
         // Draw the items
@@ -415,6 +422,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         }
 
         mazeNum.setText(String.format("Maze #%d", maze.getMazeNum()));
+
     }
 
     private int[] countItems(Character chara) {

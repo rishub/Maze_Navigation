@@ -116,5 +116,14 @@
 
             </LinearLayout>
         </HorizontalScrollView>
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:id="@+id/username"
+            android:layout_above="@+id/mazeNumber"
+            android:layout_alignStart="@+id/mazeNumber" />
     </com.example.kevinwu.maze_navigation.views.GameView>
 </RelativeLayout>
