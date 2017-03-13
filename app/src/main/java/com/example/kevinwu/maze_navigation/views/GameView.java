@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.andretietz.android.controller.DirectionView;
 import com.andretietz.android.controller.InputView;
 import com.example.kevinwu.maze_navigation.R;
+import com.example.kevinwu.maze_navigation.activities.Complete;
 import com.example.kevinwu.maze_navigation.activities.Connection;
 import com.example.kevinwu.maze_navigation.models.Maze;
 import com.example.kevinwu.maze_navigation.models.MazeFactory;
@@ -68,6 +69,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
     private int mazeFinishX, mazeFinishY;
     //the current point of the player
     private int currentX, currentY;
+    private int number;
     private Maze maze;
     private PlayerInfo mPlayer; //mock
     private Activity m_context;
@@ -85,6 +87,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
     private boolean dynamiteClick = false;
     private boolean keyClick = false;
+    private Intent endGame;
 
     public GameView(Context context) {
         super(context);
@@ -109,8 +112,9 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         this.m_context = (Activity) context;
         this.mazes = mazeIn;
         this.maze = mazes.get(mazeNumber);
-        mazeFinishX = maze.getFinalX();
-        mazeFinishY = maze.getFinalY();
+        mazeFinishX = mazeIn.get(8).getFinalX();
+        mazeFinishY = mazeIn.get(8).getFinalY();
+        number = mazeNumber;
         mazeSizeX = maze.getMazeWidth();
         mazeSizeY = maze.getMazeHeight();
         mazeLinks = maze.getLinks();
@@ -141,7 +145,6 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         b_dynamite.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("CLICK!!!!");
                 dynamiteClick = true;
             }
         });
@@ -156,6 +159,8 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
 
         // register this service as a listener
         EventBus.getDefault().register(this);
+
+        endGame = new Intent(context, Complete.class);
     }
 
     public void onEvent(RemotePlayerMoveEvent event){
@@ -191,9 +196,21 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         d.setBounds(0, 0, width, height);
         d.draw(canvas);
 
+        // Draw the finish line!
+        Drawable f;
+        if (number == 8) {
+            f = getResources().getDrawable(R.drawable.finish, null);
+            float xItemPos = (mazeFinishX * totalCellWidth) + (cellWidth / 2);
+            float yItemPos = (mazeFinishY * totalCellHeight) + (cellWidth / 2);
+            f.setBounds((int) (xItemPos - cellWidth / 3), (int) (yItemPos - cellWidth / 3), (int) (xItemPos + cellHeight / 3), (int) (yItemPos + cellHeight / 3));
+            f.draw(canvas);
+        }
+
         boolean[][] hLines = maze.getHorizontalLines();
         boolean[][] vLines = maze.getVerticalLines();
+        boolean[][] hDoors = maze.getHorizontalDoors();
         boolean[][] vDoors = maze.getVerticalDoors();
+
         //iterate over the boolean arrays to draw walls
         for (int i = 0; i < mazeSizeX; i++) {
             for (int j = 0; j < mazeSizeY; j++) {
@@ -217,13 +234,23 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                             door);
                     }
                 }
-                if (i < mazeSizeY - 1 && hLines[i][j]) {
-                    //we'll draw a horizontal line
-                    canvas.drawLine(x,               //startX
+                if (i < mazeSizeY - 1) {
+                    if (hLines[i][j]) {
+                        //we'll draw a horizontal line
+                        canvas.drawLine(x,               //startX
                             y + cellHeight,  //startY
                             x + cellWidth,   //stopX
                             y + cellHeight,  //stopY
                             line);
+                    }
+                    if (hDoors[i][j]) {
+                        canvas.drawLine(x,   //start X
+                            y + cellHeight,  //start Y
+                            x + cellWidth,   //stop X
+                            y + cellHeight,  //stop Y
+                            door);
+
+                    }
                 }
             }
         }
@@ -498,16 +525,17 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
             for (int i = 0; i < mazeLinks.size(); i++) {
                 Point point = (Point) mazeLinks.get(i).getPoint();
                 String linkDirection = (String) mazeLinks.get(i).getDirection();
-                if (currentX == point.getX() && currentY == point.getY() &&
-                        direction.equals(linkDirection)) {
-                    Maze nextMaze = mazes.get(point.getMazeLink());
+                if (currentX == point.getX() && currentY == point.getY() && direction.equals(linkDirection)) {
+                    Maze nextMaze = mazes.get(point.getMazeLink() - 1);
                     GameView nextGameView = new GameView(m_context, mazes, mazeItems, character, point.getMazeLink() - 1);
                     maze.resetPosition();
                     m_context.setContentView(nextGameView);
                 }
             }
         }
-
+        if (number == 8 && currentX == mazeFinishX && currentY == mazeFinishY){
+            m_context.startActivity(endGame);
+        }
         switch(direction) {
             case "Up":
                 moved = maze.move(Maze.UP);
