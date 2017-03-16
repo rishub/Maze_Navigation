@@ -33,6 +33,8 @@ import com.example.kevinwu.maze_navigation.models.Item;
 import com.example.kevinwu.maze_navigation.models.Character;
 import com.example.kevinwu.maze_navigation.models.RemotePlayerMoveEvent;
 import com.example.kevinwu.maze_navigation.services.BluetoothService;
+import com.example.kevinwu.maze_navigation.models.HttpGetRequest;
+
 import java.util.ArrayList;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.ThreadMode;
@@ -106,6 +108,7 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         this.m_context = (Activity) context;
         this.mazes = mazeIn;
         this.maze = mazes.get(mazeNumber);
+
         mazeFinishX = maze.getFinalX();
         mazeFinishY = maze.getFinalY();
         mazeSizeX = maze.getMazeWidth();
@@ -150,6 +153,15 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
         mazeNum = (TextView) findViewById(R.id.mazeNumber);
         username = (TextView) findViewById(R.id.username);
         username.setText(character.getUsername());
+
+        String url = "http://mazenavigation.herokuapp.com/add/position/" + character.getUsername() + "/" + maze.getMazeNum();
+        String result;
+
+        HttpGetRequest getRequest = new HttpGetRequest();
+        try {
+            result = getRequest.execute(url).get();
+        }
+        catch (Exception e) {}
 
         // register this service as a listener
         EventBus.getDefault().register(this);
@@ -299,6 +311,16 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                         System.out.println("Picked up item");
                         mazeItems.get(i).pickUp();
                         character.addItemToInventory(item_id);
+
+                        String url = "http://mazenavigation.herokuapp.com/add/item/" + character.getUsername() + "/" + item_id + "/1";
+                        String result;
+
+                        HttpGetRequest getRequest = new HttpGetRequest();
+                        try {
+                            result = getRequest.execute(url).get();
+                        }
+                        catch (Exception e) {}
+
                         continue;
                     }
                     switch (item_id) {  // Currently only have two items
@@ -356,8 +378,17 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                             }
                             break;
                     }
-                    if (open)
+                    if (open) {
                         a.useItem();
+                        String url = "http://mazenavigation.herokuapp.com/remove/item/" + character.getUsername() + "/Key/1";
+                        String result;
+
+                        HttpGetRequest getRequest = new HttpGetRequest();
+                        try {
+                            result = getRequest.execute(url).get();
+                        }
+                        catch (Exception e) {}
+                    }
 
                     keyClick = false;
                     break;
@@ -397,8 +428,17 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                             }
                             break;
                     }
-                    if (boom)
+                    if (boom) {
                         a.useItem();
+                        String url = "http://mazenavigation.herokuapp.com/remove/item/" + character.getUsername() + "/Dynamite/1";
+                        String result;
+
+                        HttpGetRequest getRequest = new HttpGetRequest();
+                        try {
+                            result = getRequest.execute(url).get();
+                        }
+                        catch (Exception e) {}
+                    }
 
                     dynamiteClick = false;
                     break;
@@ -504,6 +544,15 @@ public class GameView extends RelativeLayout implements InputView.InputEventList
                 }
             }
         }
+
+        String url = "http://mazenavigation.herokuapp.com/add/direction/" + character.getUsername() + "/" + character.getDirection();
+        String result;
+
+        HttpGetRequest getRequest = new HttpGetRequest();
+        try {
+            result = getRequest.execute(url).get();
+        }
+        catch (Exception e) {}
 
         switch(direction) {
             case "Up":
