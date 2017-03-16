@@ -16,6 +16,7 @@ public class Maze implements Serializable {
     private boolean[][] verticalLines;
     private boolean[][] horizontalLines;
     private boolean[][] verticalDoors;
+    private boolean[][] horizontalDoors;
     private int sizeX, sizeY;         //stores the width and height of the maze
     private int currentX, currentY;   //stores the current location of the ball
     private int finalX, finalY;       //stores the finishing of the maze
@@ -35,13 +36,13 @@ public class Maze implements Serializable {
     public boolean move(int direction) {
         boolean moved = false;
         if(direction == UP) {
-            if(currentY != 0 && !horizontalLines[currentY-1][currentX]) {
+            if(currentY != 0 && !horizontalLines[currentY-1][currentX] && !horizontalDoors[currentY-1][currentX]) {
                 currentY--;
                 moved = true;
             }
         }
         if(direction == DOWN) {
-            if(currentY != sizeY-1 && !horizontalLines[currentY][currentX]) {
+            if(currentY != sizeY-1 && !horizontalLines[currentY][currentX] && !horizontalDoors[currentY][currentX]) {
                 currentY++;
                 moved = true;
             }
@@ -113,7 +114,11 @@ public class Maze implements Serializable {
     public boolean[][] getVerticalDoors() { return verticalDoors; }
     public void setVerticalDoors(boolean[][] doors) {
         verticalDoors = doors;
-        sizeY = verticalDoors.length;
+    }
+
+    public boolean[][] getHorizontalDoors() { return horizontalDoors; }
+    public void setHorizontalDoors(boolean[][] doors) {
+        horizontalDoors = doors;
     }
 
     public boolean isWall(String orientation, int x, int y) {
@@ -142,10 +147,10 @@ public class Maze implements Serializable {
             if (verticalDoors[x][y])
                 return true;
         }
-//        else if (orientation.equals("Horizontal")) {
-//            if (horizontalLines[x][y])
-//                return true;
-//        }
+        else if (orientation.equals("Horizontal")) {
+            if (horizontalDoors[x][y])
+                return true;
+        }
         return false;
     }
 
@@ -153,9 +158,9 @@ public class Maze implements Serializable {
         if (orientation.equals("Vertical")) {
             verticalDoors[x][y] = false;
         }
-//        else if (orientation.equals("Horizontal")) {
-//            horizontalLines[x][y] = false;
-//        }
+        else if (orientation.equals("Horizontal")) {
+            horizontalDoors[x][y] = false;
+        }
     }
 
     public ArrayList<Pair> getLinks() {
